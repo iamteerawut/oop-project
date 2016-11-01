@@ -12,8 +12,8 @@ public class GameScreen  implements Screen {
 	
 	BarProject game;
 	Texture tex1, tex2;
-	float xR=640 , xB=640 ;
-	float count = 0, check = 0;
+	float xR=600 , xB=700 ;
+	float count = 0, check;
 	SpriteBatch batch;
 	public GameScreen(BarProject game) {
 		this.game = game;
@@ -34,39 +34,36 @@ public class GameScreen  implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		game.batch.begin();
 		game.scrollbg.updateAndRender(delta, game.batch);
+		if (Gdx.input.justTouched()) {
+			if (check == 0){check = 1;}
+			else if (check == 1){check = 0;}
+		}
 		if (!Gdx.input.isTouched()){
 			game.scrollbg.setPause(true);
 			game.scrollbg.updateAndRender(delta, game.batch);
-			System.out.println(check+ "no");
-			check = 5;
+			System.out.println("im in don't touch / check = "+ check);
 		}
-		else if ((Gdx.input.isTouched()) && (check == 0)){
-//			game.player.move(delta, count);
-			count += 1.5;
-			game.scrollbg.setPause(false);
-			game.scrollbg.updateAndRender(delta, game.batch);
-			check = 1;
-			System.out.println(check+ "0");
+		else if (Gdx.input.isTouched() && check == 1){
+				xR+=1;
+				xB-=1;
+				game.scrollbg.setPause(false);
+				game.scrollbg.updateAndRender(delta, game.batch);
+				System.out.println("im in touch / check = 0");
+			}
+		
+		else if (Gdx.input.isTouched() && check == 0){
+				xR-=1;
+				xB+=1;
+				game.scrollbg.setPause(false);
+				game.scrollbg.updateAndRender(delta, game.batch);
+				System.out.println("im in touch / check = 1");
 		}
-		else if ((Gdx.input.isTouched()) && (check == 1)){
-//			game.player.move(delta, count);
-			count += 1.5;
-			game.scrollbg.setPause(false);
-			game.scrollbg.updateAndRender(delta, game.batch);
-			check = 5;
-			System.out.println(check+ "1");
-		}
-		if(check == 0){
-			xR+= count;
-			xB-= count;
-		}
-		else if (check == 1){
-			xR-= count;
-			xB+= count;
-		}
+
+		
 		game.batch.draw(tex1, xR, 300, 20, 20);
 		game.batch.draw(tex2, xB, 300, 20, 20);
 		game.batch.end();
+		
 	}
 
 	@Override
