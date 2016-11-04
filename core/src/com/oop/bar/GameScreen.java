@@ -2,10 +2,10 @@ package com.oop.bar;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.oop.bar.BarProject;
 
 public class GameScreen  implements Screen {
@@ -14,9 +14,12 @@ public class GameScreen  implements Screen {
 	float check=0;
 	SpriteBatch batch;
 	Texture tex1, tex2;
-	float x_start = 300;
+	Rectangle rec1 = new Rectangle();
+	Rectangle rec2 = new Rectangle();
+	float x_start_r = 300;
+	float x_start_l = 300;
 	float x_right, x_left;
-	float y_right = 500, y_left = 500;
+	float y_right = 480, y_left = 500;
 	float speed_hand = 500;
 	
 	public GameScreen(BarProject game) {
@@ -63,11 +66,15 @@ public class GameScreen  implements Screen {
 				game.scrollbg.updateAndRender(delta, game.batch);
 		}
 		
-		if (Gdx.input.isKeyPressed(Keys.SPACE)){
+		rec1.set(x_right, y_right, 20, 20);
+		rec2.set(x_left, y_left, 20, 20);
+		
+		if (rec1.overlaps(rec2)){
 			game.setScreen(new EndScreen(game));
 		}
-		game.batch.draw(tex1,  x_right+ x_start, y_right, 40, 40);
-		game.batch.draw(tex2,  x_left + x_start, y_left, 40, 40);
+		
+		game.batch.draw(tex1, x_right + x_start_r, y_right, 40, 40);
+		game.batch.draw(tex2, x_left + x_start_l, y_left, 40, 40);
 		game.batch.end();
 		
 	}
