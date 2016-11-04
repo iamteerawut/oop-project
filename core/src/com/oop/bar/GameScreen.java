@@ -13,19 +13,21 @@ public class GameScreen  implements Screen {
 	BarProject game;
 	float check=0;
 	SpriteBatch batch;
-	Texture tex1, tex2;
-	Rectangle rec1 = new Rectangle();
-	Rectangle rec2 = new Rectangle();
 	float x_start_r = 300;
 	float x_start_l = 300;
 	float x_right, x_left;
-	float y_right = 480, y_left = 500;
+	float y_right, y_left;
 	float speed_hand = 500;
+	
+	Texture tex1 = new Texture("boxR.png");
+	Texture tex2 = new Texture("boxB.png");
+	Rectangle rec1 = new Rectangle();
+	Rectangle rec2 = new Rectangle();
 	
 	public GameScreen(BarProject game) {
 		this.game = game;
-		tex1 = new Texture("boxR.png");
-		tex2 = new Texture("boxB.png");
+		
+		
 	}
 
 	public void show() {
@@ -51,8 +53,7 @@ public class GameScreen  implements Screen {
 		else if (Gdx.input.isTouched() && check == 1){
 				x_right += delta*speed_hand;
 				x_left -= delta*speed_hand;
-				if(x_right <  x_left){ y_left -= delta*100; }
-				else {y_left += delta*100;}
+				y_right = ((x_right*x_right) /500) + 500;
 				game.scrollbg.setPause(false);
 				game.scrollbg.updateAndRender(delta, game.batch);
 			}
@@ -60,18 +61,17 @@ public class GameScreen  implements Screen {
 		else if (Gdx.input.isTouched() && check == 0){
 				x_right -=delta*speed_hand;
 				x_left +=delta*speed_hand;
-				if(x_right > x_left){ y_left -= delta*100; }
-				else {y_left += delta*100;}
+				y_left = ((x_left*x_left) /500) + 500;
 				game.scrollbg.setPause(false);
 				game.scrollbg.updateAndRender(delta, game.batch);
 		}
 		
-		rec1.set(x_right, y_right, 20, 20);
-		rec2.set(x_left, y_left, 20, 20);
+		rec1.set(x_right+x_start_r, y_right, 20, 20);
+		rec2.set(x_left+x_start_l, y_left, 20, 20);
 		
-		if (rec1.overlaps(rec2)){
-			game.setScreen(new EndScreen(game));
-		}
+//		if (rec1.overlaps(rec2)){
+//			game.setScreen(new EndScreen(game));
+//		}
 		
 		game.batch.draw(tex1, x_right + x_start_r, y_right, 40, 40);
 		game.batch.draw(tex2, x_left + x_start_l, y_left, 40, 40);
