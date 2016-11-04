@@ -10,13 +10,16 @@ public class BarProject extends Game {
 	
 	public SpriteBatch batch;
 	public ScrollingBackground scrollbg;
-	public Player player;
 	
 	public void create () {
 		batch = new SpriteBatch();
 		this.setScreen(new MenuScreen(this));
 		this.scrollbg = new ScrollingBackground();
+<<<<<<< HEAD
 		this.player = new Player();
+=======
+
+>>>>>>> origin/master
 	}
 	public void render () {
 		super.render();

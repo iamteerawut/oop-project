@@ -11,17 +11,21 @@ import com.oop.bar.BarProject;
 public class GameScreen  implements Screen {
 	
 	BarProject game;
-	Texture tex1, tex2;
-	float xR=300 , xB=400 ;
-	float check;
+	float check=0;
 	SpriteBatch batch;
+	Texture tex1, tex2;
+	float x_start = 300;
+	float x_right, x_left;
+	float y_right = 500, y_left = 500;
+	float speed_hand = 500;
+	
 	public GameScreen(BarProject game) {
 		this.game = game;
+		tex1 = new Texture("boxR.png");
+		tex2 = new Texture("boxB.png");
 	}
 
-	@Override
 	public void show() {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -41,23 +45,32 @@ public class GameScreen  implements Screen {
 			game.scrollbg.updateAndRender(delta, game.batch);
 		}
 		else if (Gdx.input.isTouched() && check == 1){
-				xR+= delta*100;
-				xB-= delta*100;
+				x_right += delta*speed_hand;
+				x_left -= delta*speed_hand;
+				if(x_right <  x_left){ y_left -= delta*100; }
+				else {y_left += delta*100;}
 				game.scrollbg.setPause(false);
 				game.scrollbg.updateAndRender(delta, game.batch);
 			}
 		
 		else if (Gdx.input.isTouched() && check == 0){
-				xR-=delta*100;
-				xB+=delta*100;
+				x_right -=delta*speed_hand;
+				x_left +=delta*speed_hand;
+				if(x_right > x_left){ y_left -= delta*100; }
+				else {y_left += delta*100;}
 				game.scrollbg.setPause(false);
 				game.scrollbg.updateAndRender(delta, game.batch);
 		}
+<<<<<<< HEAD
 		if (xR == xB)
 		{
 			game.setScreen(new EndScreen(game));
 		}
 		
+=======
+		game.batch.draw(tex1,  x_right+ x_start, y_right, 40, 40);
+		game.batch.draw(tex2,  x_left + x_start, y_left, 40, 40);
+>>>>>>> origin/master
 		game.batch.end();
 		
 	}

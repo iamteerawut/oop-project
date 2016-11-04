@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class ScrollingBackground {
 	
-	public static final int DEFAULT_SPEED = 100;
+	public static final int DEFAULT_SPEED = 250;
 	public static final int ACCELERATION = 40;
 	public static final int GOAL_REACH_ACCELERATION = 200;
 	
