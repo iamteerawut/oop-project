@@ -23,6 +23,7 @@ public class ScrollingBackground {
 		
 		x1 = 0;
 		x2 = bg.getWidth();
+		
 		speed = 0;
 		goalSpeed = DEFAULT_SPEED;
 		imageScale = BarProject.WIDTH / bg.getWidth();
@@ -42,6 +43,7 @@ public class ScrollingBackground {
 				}
 			}
 		}
+		
 		if (speedPause) {
 			speed = 0;
 		}
