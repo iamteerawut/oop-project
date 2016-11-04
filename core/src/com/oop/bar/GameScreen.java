@@ -16,7 +16,8 @@ public class GameScreen  implements Screen {
 	float x_start_r = 300;
 	float x_start_l = 300;
 	float x_right, x_left;
-	float y_right, y_left;
+	float y_right = 450;
+	float y_left = 450;
 	float speed_hand = 500;
 	
 	Texture tex1 = new Texture("boxR.png");
@@ -53,7 +54,7 @@ public class GameScreen  implements Screen {
 		else if (Gdx.input.isTouched() && check == 1){
 				x_right += delta*speed_hand;
 				x_left -= delta*speed_hand;
-				y_right = ((x_right*x_right) /500) + 500;
+				y_right = ((x_right*x_right) /400) + 450;
 				game.scrollbg.setPause(false);
 				game.scrollbg.updateAndRender(delta, game.batch);
 			}
@@ -61,7 +62,7 @@ public class GameScreen  implements Screen {
 		else if (Gdx.input.isTouched() && check == 0){
 				x_right -=delta*speed_hand;
 				x_left +=delta*speed_hand;
-				y_left = ((x_left*x_left) /500) + 500;
+				y_left = ((x_left*x_left) /400) + 450;
 				game.scrollbg.setPause(false);
 				game.scrollbg.updateAndRender(delta, game.batch);
 		}
