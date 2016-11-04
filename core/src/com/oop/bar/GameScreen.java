@@ -34,6 +34,7 @@ public class GameScreen  implements Screen {
 		
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		
 		game.batch.begin();
 		game.scrollbg.updateAndRender(delta, game.batch);
 		if (Gdx.input.justTouched()) {
@@ -61,16 +62,12 @@ public class GameScreen  implements Screen {
 				game.scrollbg.setPause(false);
 				game.scrollbg.updateAndRender(delta, game.batch);
 		}
-<<<<<<< HEAD
-		if (xR == xB)
-		{
+		
+		if (Gdx.input.isKeyPressed(Keys.SPACE)){
 			game.setScreen(new EndScreen(game));
 		}
-		
-=======
 		game.batch.draw(tex1,  x_right+ x_start, y_right, 40, 40);
 		game.batch.draw(tex2,  x_left + x_start, y_left, 40, 40);
->>>>>>> origin/master
 		game.batch.end();
 		
 	}
