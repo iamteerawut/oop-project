@@ -46,7 +46,7 @@ public class GameScreen  implements Screen {
 		else if (Gdx.input.isTouched() && check == 1){
 				x_right += delta*speed_hand;
 				x_left -= delta*speed_hand;
-				if(x_right < x_left){ y_left -= delta*100; }
+				if(x_right <  x_left){ y_left -= delta*100; }
 				else {y_left += delta*100;}
 				game.scrollbg.setPause(false);
 				game.scrollbg.updateAndRender(delta, game.batch);
