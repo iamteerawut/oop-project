@@ -32,9 +32,9 @@ public class GameScreen implements Screen {
 	
 	Texture tex1 = new Texture("boxR.png");
 	Texture tex2 = new Texture("boxB.png");
+	
 	Rectangle hand_r = new Rectangle();
 	Rectangle hand_l = new Rectangle();
-	
 	Rectangle bar1 = new Rectangle();
 
 	public GameScreen(BarProject game) {
@@ -60,16 +60,22 @@ public class GameScreen implements Screen {
 		
 		bar = new TextureRegion(new Texture("bar.png"));
 		
-		for(int i = 0; i < 1; i++) {
-			bars.add(new Barja(0 + (i * 200), 450, bar));
+		for(int i = 0; i < 10; i++) {
+			bars.add(new Barja((i * 400), 450, bar));
 		}
+		
+		hand_r.set(x_start_r, y_right, 40, 40);
+		hand_l.set(x_start_l, y_left, 40, 40);
 		
 		for(Barja bar: bars) {
 			bar.position.x += 1 * 200;
+			bar1.set(bar.position.x, bar.position.y, 40, 40);
+			if (hand_r.overlaps(bar1) || hand_l.overlaps(bar1)) {
+				game.setScreen(new EndScreen(game));
+			}
 		}
 		
-		
-		camera.position.x = x_right + 400;
+		camera.position.x = (x_right / 2) + (x_left / 2) + 400;
 		camera.update();
 		
 		game.batch.setProjectionMatrix(camera.combined);
@@ -99,9 +105,6 @@ public class GameScreen implements Screen {
 				game.scrollbg.setPause(true);
 				game.scrollbg.updateAndRender(delta, game.batch);
 		}
-		
-		hand_r.set(x_right + x_start_r, y_right, 20, 20);
-		hand_l.set(x_left + x_start_l, y_left, 20, 20);
 		
 		for(Barja b: bars) {
 			game.batch.draw(b.image, b.position.x, b.position.y);
