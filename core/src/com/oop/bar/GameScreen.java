@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.oop.bar.BarProject;
 
-public class GameScreen  implements Screen {
+public class GameScreen implements Screen {
 	
 	BarProject game;
 	float check=0;
@@ -22,13 +22,13 @@ public class GameScreen  implements Screen {
 	
 	Texture tex1 = new Texture("boxR.png");
 	Texture tex2 = new Texture("boxB.png");
-	Rectangle rec1 = new Rectangle();
-	Rectangle rec2 = new Rectangle();
+	Rectangle hand_r = new Rectangle();
+	Rectangle hand_l = new Rectangle();
 	
+	Rectangle bar = new Rectangle();
+
 	public GameScreen(BarProject game) {
 		this.game = game;
-		
-		
 	}
 
 	public void show() {
@@ -42,6 +42,7 @@ public class GameScreen  implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		game.batch.begin();
+		
 		game.scrollbg.updateAndRender(delta, game.batch);
 		if (Gdx.input.justTouched()) {
 			if (check == 0){check = 1;}
@@ -67,12 +68,14 @@ public class GameScreen  implements Screen {
 				game.scrollbg.updateAndRender(delta, game.batch);
 		}
 		
-		rec1.set(x_right+x_start_r, y_right, 20, 20);
-		rec2.set(x_left+x_start_l, y_left, 20, 20);
+		hand_r.set(x_right+x_start_r, y_right, 20, 20);
+		hand_l.set(x_left+x_start_l, y_left, 20, 20);
+		game.bar.render(batch);
 		
 //		if (rec1.overlaps(rec2)){
 //			game.setScreen(new EndScreen(game));
 //		}
+		
 		
 		game.batch.draw(tex1, x_right + x_start_r, y_right, 40, 40);
 		game.batch.draw(tex2, x_left + x_start_l, y_left, 40, 40);

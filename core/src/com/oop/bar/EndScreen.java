@@ -13,7 +13,7 @@ public class EndScreen implements Screen {
 	
 	public EndScreen(BarProject game) {
 		this.game = game;
-		textEnd= new Texture(Gdx.files.internal("plane1.png"));
+		textEnd= new Texture(Gdx.files.internal("gameover.png"));
 	}
 	
 	@Override
