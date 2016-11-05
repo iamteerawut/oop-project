@@ -70,7 +70,6 @@ public class GameScreen implements Screen {
 		
 		hand_r.set(x_right+x_start_r, y_right, 20, 20);
 		hand_l.set(x_left+x_start_l, y_left, 20, 20);
-		game.bar.render(batch);
 		
 //		if (rec1.overlaps(rec2)){
 //			game.setScreen(new EndScreen(game));
