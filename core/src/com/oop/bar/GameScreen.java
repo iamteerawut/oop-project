@@ -51,7 +51,7 @@ public class GameScreen implements Screen {
 		uiCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		uiCamera.update();
 		
-		camera.position.x = x_left + 400;
+		camera.position.x = x_right + 400;
 		camera.update();
 		
 		game.batch.setProjectionMatrix(camera.combined);
