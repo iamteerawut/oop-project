@@ -3,14 +3,17 @@ package com.oop.bar;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
-import com.oop.bar.BarProject;
+import com.oop.bar.Bar.Barja;
 
 public class GameScreen implements Screen {
 	
 	BarProject game;
+	OrthographicCamera camera;
+	OrthographicCamera uiCamera;
 	float check=0;
 	SpriteBatch batch;
 	float x_start_r = 300;
@@ -29,6 +32,7 @@ public class GameScreen implements Screen {
 
 	public GameScreen(BarProject game) {
 		this.game = game;
+		
 	}
 
 	public void show() {
@@ -41,6 +45,16 @@ public class GameScreen implements Screen {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
+		camera = new OrthographicCamera();
+		camera.setToOrtho(false, 1280, 720);;
+		uiCamera = new OrthographicCamera();
+		uiCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		uiCamera.update();
+		
+		camera.position.x = x_left + 400;
+		camera.update();
+		
+		game.batch.setProjectionMatrix(camera.combined);
 		game.batch.begin();
 		
 		game.scrollbg.updateAndRender(delta, game.batch);
@@ -54,28 +68,24 @@ public class GameScreen implements Screen {
 		}
 		else if (Gdx.input.isTouched() && check == 1){
 				x_right += delta*speed_hand;
-				x_left -= delta*speed_hand;
-				y_right = ((x_right*x_right) /400) + 450;
-				game.scrollbg.setPause(false);
+				//x_left -= delta*speed_hand;
+				//y_right = ((x_right*x_right) /400) + 450;
+				game.scrollbg.setPause(true);
 				game.scrollbg.updateAndRender(delta, game.batch);
 			}
 		
 		else if (Gdx.input.isTouched() && check == 0){
-				x_right -=delta*speed_hand;
+				//x_right -=delta*speed_hand;
 				x_left +=delta*speed_hand;
-				y_left = ((x_left*x_left) /400) + 450;
-				game.scrollbg.setPause(false);
+				//y_left = ((x_left*x_left) /400) + 450;
+				game.scrollbg.setPause(true);
 				game.scrollbg.updateAndRender(delta, game.batch);
 		}
 		
 		hand_r.set(x_right+x_start_r, y_right, 20, 20);
 		hand_l.set(x_left+x_start_l, y_left, 20, 20);
 		
-//		if (rec1.overlaps(rec2)){
-//			game.setScreen(new EndScreen(game));
-//		}
-		
-		
+		//game.bar.render(game.batch);
 		game.batch.draw(tex1, x_right + x_start_r, y_right, 40, 40);
 		game.batch.draw(tex2, x_left + x_start_l, y_left, 40, 40);
 		game.batch.end();
