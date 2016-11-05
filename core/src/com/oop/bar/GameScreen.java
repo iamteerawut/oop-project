@@ -6,16 +6,23 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import com.oop.bar.Bar.Barja;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
 public class GameScreen implements Screen {
 	
 	BarProject game;
 	OrthographicCamera camera;
 	OrthographicCamera uiCamera;
-	float check=0;
+	
+	TextureRegion bar;
+	Array<Barja> bars = new Array<Barja>();
+	
 	SpriteBatch batch;
+	
+	float check=0;
 	float x_start_r = 300;
 	float x_start_l = 300;
 	float x_right, x_left;
@@ -28,7 +35,7 @@ public class GameScreen implements Screen {
 	Rectangle hand_r = new Rectangle();
 	Rectangle hand_l = new Rectangle();
 	
-	Rectangle bar = new Rectangle();
+	Rectangle bar1 = new Rectangle();
 
 	public GameScreen(BarProject game) {
 		this.game = game;
@@ -50,6 +57,17 @@ public class GameScreen implements Screen {
 		uiCamera = new OrthographicCamera();
 		uiCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		uiCamera.update();
+		
+		bar = new TextureRegion(new Texture("bar.png"));
+		
+		for(int i = 0; i < 1; i++) {
+			bars.add(new Barja(0 + (i * 200), 450, bar));
+		}
+		
+		for(Barja bar: bars) {
+			bar.position.x += 1 * 200;
+		}
+		
 		
 		camera.position.x = x_right + 400;
 		camera.update();
@@ -82,10 +100,13 @@ public class GameScreen implements Screen {
 				game.scrollbg.updateAndRender(delta, game.batch);
 		}
 		
-		hand_r.set(x_right+x_start_r, y_right, 20, 20);
-		hand_l.set(x_left+x_start_l, y_left, 20, 20);
+		hand_r.set(x_right + x_start_r, y_right, 20, 20);
+		hand_l.set(x_left + x_start_l, y_left, 20, 20);
 		
-		//game.bar.render(game.batch);
+		for(Barja b: bars) {
+			game.batch.draw(b.image, b.position.x, b.position.y);
+		}
+		
 		game.batch.draw(tex1, x_right + x_start_r, y_right, 40, 40);
 		game.batch.draw(tex2, x_left + x_start_l, y_left, 40, 40);
 		game.batch.end();
@@ -120,6 +141,17 @@ public class GameScreen implements Screen {
 	public void dispose() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	static class Barja {
+		Vector2 position = new Vector2();
+		TextureRegion image;
+
+		public Barja(float x, float y, TextureRegion image) {
+			this.position.x = x;
+			this.position.y = y;
+			this.image = image;
+		}
 	}
 
 }
