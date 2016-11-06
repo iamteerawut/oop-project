@@ -30,6 +30,8 @@ public class GameScreen implements Screen {
 	float y_left = 450;
 	float speed_hand = 500;
 	
+	int score = 0;
+	
 	Texture tex1 = new Texture("boxR.png");
 	Texture tex2 = new Texture("boxB.png");
 	
@@ -60,19 +62,12 @@ public class GameScreen implements Screen {
 		
 		bar = new TextureRegion(new Texture("bar.png"));
 		
-		for(int i = 0; i < 10; i++) {
-			bars.add(new Barja((i * 400), 450, bar));
+		for(int i = 0; i < 8; i++) {
+			bars.add(new Barja((i * 250), 450, bar));
 		}
 		
-		hand_r.set(x_start_r, y_right, 40, 40);
-		hand_l.set(x_start_l, y_left, 40, 40);
-		
 		for(Barja bar: bars) {
-			bar.position.x += 1 * 200;
-			bar1.set(bar.position.x, bar.position.y, 40, 40);
-			if (hand_r.overlaps(bar1) || hand_l.overlaps(bar1)) {
-				game.setScreen(new EndScreen(game));
-			}
+			bar.position.x += 1 * 250;
 		}
 		
 		camera.position.x = (x_right / 2) + (x_left / 2) + 400;
