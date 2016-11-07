@@ -66,8 +66,22 @@ public class GameScreen implements Screen {
 			bars.add(new Barja((i * 250), 450, bar));
 		}
 		
+		hand_r.set(x_right + x_start_r, y_right, 50, 50);
+		hand_l.set(x_left + x_start_l, y_left, 50, 50);
+		
 		for(Barja bar: bars) {
 			bar.position.x += 1 * 250;
+			bar1.set(bar.position.x, bar.position.y, 50, 50);
+			if (!Gdx.input.isTouched()) {
+				if (hand_r.overlaps(bar1)) {
+					score++;
+					System.out.println(score);
+				}
+				else if (hand_l.overlaps(bar1)) {
+					score++;
+					System.out.println(score);
+				}
+			}
 		}
 		
 		camera.position.x = (x_right / 2) + (x_left / 2) + 400;
