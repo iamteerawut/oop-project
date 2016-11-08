@@ -1,5 +1,7 @@
 package com.oop.bar;
 
+import java.util.Random;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -36,6 +38,10 @@ public class BarGame extends ApplicationAdapter implements Screen {
 	int check;
 	int score;
 	int x_right, x_left;
+	int speed_hand = 800;
+	
+	Random ran;
+	
 	
 	@Override
 	public void create() {
@@ -46,22 +52,31 @@ public class BarGame extends ApplicationAdapter implements Screen {
 		font = new BitmapFont(Gdx.files.internal("arial.fnt"));
 		
 		background = new Texture("bg4.png");	
-		bar = new TextureRegion(new Texture("bar.png"));
-		hand_right = new Texture("boxR.png");
+		bar = new TextureRegion(new Texture("boxR.png"));
+		hand_right = new Texture("boxB.png");
 		hand_left = new Texture("boxB.png");
+		ran = new Random();
+		
 		
 		resetWorld();
+		
 	}
 	
 	private void resetWorld() {
+		score = 0;
 		hand_rPos.set(300, 450);
 		hand_lPos.set(300, 450);
 		camera.position.x = 400;
 		
 		bars.clear();
-		for(int i = 0; i < 7; i++) {
-			bars.add(new Bar(i * 200, 450, bar));
+		
+		for(int i = 0; i < 100; i++) {
+			int r = (ran.nextInt(2)+1)* 100;
+			bars.add(new Bar(i *100 + r, 450, bar));
+			System.out.println(i *100 + r);
+			
 		}
+		
 	}
 	
 	private void updateWorld() {
@@ -69,25 +84,27 @@ public class BarGame extends ApplicationAdapter implements Screen {
 		
 		camera.position.x = (x_right / 2) + (x_left / 2) + 400;
 		
-		hand_r.set(x_right + 300, 450, 50, 50);
-		hand_l.set(x_left + 300, 450, 50, 50);
+		hand_r.set(x_right + 300, 450, 20, 20);
+		hand_l.set(x_left + 300, 450, 20, 20);
 		
 		for(Bar b: bars) {
 			if(camera.position.x - b.position.x > 650 + b.image.getRegionWidth()) {
-				b.position.x += 7 * 200;
+				b.position.x += 100 * 100;
 				b.position.y = 450;
 				b.image = bar;
 				b.counted = false;
 			}
-			mbar.set(b.position.x, b.position.y, 10, 10);
-			if (!Gdx.input.isTouched()) {
-				if (hand_r.overlaps(mbar) && !hand_l.overlaps(mbar)) {
-					System.out.println("Game Over");
-				}
-				if (!hand_r.overlaps(mbar) && hand_l.overlaps(mbar)) {
-					System.out.println("Game Over");
-				}
-			}
+			mbar.set(b.position.x, b.position.y, 30, 30);
+//			if (!Gdx.input.isTouched()) {
+//				if (hand_r.overlaps(mbar) && !hand_l.overlaps(mbar)) {
+//					score++;
+//					System.out.println(score);
+//				}
+//				if (!hand_r.overlaps(mbar) && hand_l.overlaps(mbar)) {
+//					score++;
+//					System.out.println(score+"*");
+//				}
+//			}
 		}
 		
 		if (Gdx.input.justTouched()) {
@@ -99,11 +116,11 @@ public class BarGame extends ApplicationAdapter implements Screen {
 			}
 		}
 		if (Gdx.input.isTouched() && check == 1){
-			x_right += deltaTime * 250;
+			x_right += deltaTime * speed_hand;
 		}
 	
 		else if (Gdx.input.isTouched() && check == 0){
-			x_left += deltaTime * 250;
+			x_left += deltaTime * speed_hand;
 		}
 	}
 	
@@ -115,8 +132,8 @@ public class BarGame extends ApplicationAdapter implements Screen {
 		for(Bar bar: bars) {
 			batch.draw(bar.image, bar.position.x, bar.position.y);
 		}
-		batch.draw(hand_right, x_right + 300, 450, 40, 40);
-		batch.draw(hand_left, x_left + 300, 450, 40, 40);
+		batch.draw(hand_right, x_right + 300, 450, 20, 20);
+		batch.draw(hand_left, x_left + 300, 450, 20, 20);
 		batch.end();
 		
 	}
@@ -150,7 +167,6 @@ public class BarGame extends ApplicationAdapter implements Screen {
 
 	@Override
 	public void render(float delta) {
-		// TODO Auto-generated method stub
 		
 	}
 
