@@ -17,14 +17,18 @@ import com.badlogic.gdx.utils.Array;
 
 public class BarGame extends ApplicationAdapter implements Screen {
 	
+	BarProject game;
+	
 	SpriteBatch batch;
 	OrthographicCamera camera;
 	
 	TextureRegion bar;
 	Texture background;
-	Texture hand_right;
-	Texture hand_left;
+	TextureRegion hand_right;
+	TextureRegion hand_left;
 	BitmapFont font;
+	
+	Boolean count = true;
 	
 	Vector2 hand_rPos = new Vector2();
 	Vector2 hand_lPos = new Vector2();
@@ -33,15 +37,23 @@ public class BarGame extends ApplicationAdapter implements Screen {
 	
 	Rectangle hand_r = new Rectangle();
 	Rectangle hand_l = new Rectangle();
-	Rectangle mbar = new Rectangle();
+	Rectangle mbar_New = new Rectangle();
+	Rectangle mbar_Old = new Rectangle();
 	
 	int check;
 	int score;
-	int x_right, x_left;
+	int x_right = 100, x_left = 200;
 	int speed_hand = 800;
 	
 	Random ran;
 	
+	public BarGame(){
+		
+	}
+	
+	public BarGame(BarProject game){
+		this.game = game;
+	}
 	
 	@Override
 	public void create() {
@@ -53,11 +65,10 @@ public class BarGame extends ApplicationAdapter implements Screen {
 		
 		background = new Texture("bg4.png");	
 		bar = new TextureRegion(new Texture("boxR.png"));
-		hand_right = new Texture("boxB.png");
-		hand_left = new Texture("boxB.png");
+		hand_right = new TextureRegion(new Texture("boxB.png"));
+		hand_left = new TextureRegion(new Texture("boxB.png"));
 		ran = new Random();
-		
-		
+				
 		resetWorld();
 		
 	}
@@ -71,10 +82,12 @@ public class BarGame extends ApplicationAdapter implements Screen {
 		bars.clear();
 		
 		for(int i = 0; i < 100; i++) {
-			int r = (ran.nextInt(2)+1)* 100;
+			float r = ran.nextFloat()* 100;
+			if(r < 50){
+				r = 82;
+			}
 			bars.add(new Bar(i *100 + r, 450, bar));
-			System.out.println(i *100 + r);
-			
+			System.out.println(r+"" +"/"+ i+"");
 		}
 		
 	}
@@ -84,8 +97,8 @@ public class BarGame extends ApplicationAdapter implements Screen {
 		
 		camera.position.x = (x_right / 2) + (x_left / 2) + 400;
 		
-		hand_r.set(x_right + 300, 450, 20, 20);
-		hand_l.set(x_left + 300, 450, 20, 20);
+		hand_r.set(x_right, 450, 20, 20);
+		hand_l.set(x_left, 450, 20, 20);
 		
 		for(Bar b: bars) {
 			if(camera.position.x - b.position.x > 650 + b.image.getRegionWidth()) {
@@ -94,17 +107,23 @@ public class BarGame extends ApplicationAdapter implements Screen {
 				b.image = bar;
 				b.counted = false;
 			}
-			mbar.set(b.position.x, b.position.y, 30, 30);
-//			if (!Gdx.input.isTouched()) {
-//				if (hand_r.overlaps(mbar) && !hand_l.overlaps(mbar)) {
-//					score++;
-//					System.out.println(score);
-//				}
+			mbar_New.set(b.position.x, b.position.y, 30, 30);
+			if (!Gdx.input.isTouched()) {
+				if (hand_r.overlaps(mbar_New) && !hand_l.overlaps(mbar_Old) && count) {
+					score++;
+					System.out.println(score);
+					count = false;
+				}
+				else{
+					//game.setScreen(new EndScreen(game));
+				}
+				mbar_Old = mbar_New;
 //				if (!hand_r.overlaps(mbar) && hand_l.overlaps(mbar)) {
 //					score++;
 //					System.out.println(score+"*");
 //				}
-//			}
+			}
+			else{ count = true; }
 		}
 		
 		if (Gdx.input.justTouched()) {
@@ -130,10 +149,10 @@ public class BarGame extends ApplicationAdapter implements Screen {
 		batch.begin();
 		batch.draw(background, camera.position.x - background.getWidth() / 2, 0);
 		for(Bar bar: bars) {
-			batch.draw(bar.image, bar.position.x, bar.position.y);
+			batch.draw(bar.image, bar.position.x, bar.position.y,20,20);
 		}
-		batch.draw(hand_right, x_right + 300, 450, 20, 20);
-		batch.draw(hand_left, x_left + 300, 450, 20, 20);
+		batch.draw(hand_right, x_right, 450, 20, 20);
+		batch.draw(hand_left, x_left, 450, 20, 20);
 		batch.end();
 		
 	}
