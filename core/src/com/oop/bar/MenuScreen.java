@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.oop.bar.BarProject;
 
 public class MenuScreen implements Screen{
 
@@ -16,6 +15,7 @@ public class MenuScreen implements Screen{
 	private static final int SETTING_BUTTON_HEIGHT = 10;
 	
 	BarProject game;
+	
 	Texture playButtonActive;
 	Texture playButtonInactive;
 	Texture exitButtonActive;
@@ -36,12 +36,11 @@ public class MenuScreen implements Screen{
 	@Override
 	public void render(float delta) {
 
-		Gdx.gl.glClearColor(.222f, 0, 0, 1);
+		Gdx.gl.glClearColor(.222f, 1, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		game.batch.begin();
 		
+		game.batch.begin();
 		if (Gdx.input.isTouched()) {
-			game.setScreen(new GameScreen(game));
 		}
 		game.batch.end();
 		

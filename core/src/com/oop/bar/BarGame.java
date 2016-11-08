@@ -4,7 +4,6 @@ import java.util.Random;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -15,17 +14,20 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-public class BarGame extends ApplicationAdapter implements Screen {
+public class BarGame extends ApplicationAdapter{
 	
 	BarProject game;
 	
 	SpriteBatch batch;
 	OrthographicCamera camera;
+	OrthographicCamera uiCamera;
 	
-	TextureRegion bar;
 	Texture background;
+	TextureRegion bar;
 	TextureRegion hand_right;
 	TextureRegion hand_left;
+	TextureRegion ready;
+	TextureRegion gameOver;
 	BitmapFont font;
 	
 	Boolean count = true;
@@ -40,8 +42,10 @@ public class BarGame extends ApplicationAdapter implements Screen {
 	Rectangle mbar_New = new Rectangle();
 	Rectangle mbar_Old = new Rectangle();
 	
+	GameState gameState = GameState.Start;
+	
 	int check;
-	int score;
+	int score = 0;
 	int x_right = 100, x_left = 200;
 	int speed_hand = 800;
 	
@@ -60,10 +64,16 @@ public class BarGame extends ApplicationAdapter implements Screen {
 		batch = new SpriteBatch();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 1280, 720);
+		uiCamera = new OrthographicCamera();
+		uiCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		uiCamera.update();
 		
 		font = new BitmapFont(Gdx.files.internal("arial.fnt"));
 		
 		background = new Texture("bg4.png");	
+		ready = new TextureRegion(new Texture("ready.png"));
+		gameOver = new TextureRegion(new Texture("gameover.png"));
+		
 		bar = new TextureRegion(new Texture("boxR.png"));
 		hand_right = new TextureRegion(new Texture("boxB.png"));
 		hand_left = new TextureRegion(new Texture("boxB.png"));
@@ -95,6 +105,16 @@ public class BarGame extends ApplicationAdapter implements Screen {
 	private void updateWorld() {
 		float deltaTime = Gdx.graphics.getDeltaTime();
 		
+		if(Gdx.input.justTouched()) {
+			if(gameState == GameState.Start) {
+				gameState = GameState.Running;
+			}
+			if(gameState == GameState.GameOver) {
+				gameState = GameState.Start;
+				resetWorld();
+			}
+		}
+		
 		camera.position.x = (x_right / 2) + (x_left / 2) + 400;
 		
 		hand_r.set(x_right, 450, 20, 20);
@@ -115,7 +135,7 @@ public class BarGame extends ApplicationAdapter implements Screen {
 					count = false;
 				}
 				else{
-					//game.setScreen(new EndScreen(game));
+					gameState = GameState.GameOver;
 				}
 				mbar_Old = mbar_New;
 //				if (!hand_r.overlaps(mbar) && hand_l.overlaps(mbar)) {
@@ -155,6 +175,18 @@ public class BarGame extends ApplicationAdapter implements Screen {
 		batch.draw(hand_left, x_left, 450, 20, 20);
 		batch.end();
 		
+		batch.setProjectionMatrix(uiCamera.combined);
+		batch.begin();		
+		if(gameState == GameState.Start) {
+			batch.draw(ready, Gdx.graphics.getWidth() / 2 - ready.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - ready.getRegionHeight() / 2);
+		}
+		if(gameState == GameState.GameOver) {
+			batch.draw(gameOver, Gdx.graphics.getWidth() / 2 - gameOver.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - gameOver.getRegionHeight() / 2);
+		}
+		if(gameState == GameState.GameOver || gameState == GameState.Running) {
+			font.draw(batch, "" + score, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 60);
+		}
+		batch.end();
 	}
 
 	@Override
@@ -178,21 +210,8 @@ public class BarGame extends ApplicationAdapter implements Screen {
 		}
 	}
 
-	@Override
-	public void show() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void render(float delta) {
-		
-	}
-
-	@Override
-	public void hide() {
-		// TODO Auto-generated method stub
-		
+	static enum GameState {
+		Start, Running, GameOver
 	}
 
 }
