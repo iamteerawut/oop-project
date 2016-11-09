@@ -39,16 +39,15 @@ public class BarGame extends ApplicationAdapter{
 	
 	Rectangle hand_r = new Rectangle();
 	Rectangle hand_l = new Rectangle();
-	Rectangle mbar_New = new Rectangle();
-	Rectangle mbar_Old = new Rectangle();
+	Rectangle mbar = new Rectangle();
 	
 	GameState gameState = GameState.Start;
 	
 	int check;
 	int score = 0;
-	int x_right = 100, x_left = 200;
-	int speed_hand = 800;
-	
+	int x_right = 200, x_left = 200;
+	int speed_hand = 300;
+		
 	Random ran;
 	
 	public BarGame(){
@@ -74,9 +73,9 @@ public class BarGame extends ApplicationAdapter{
 		ready = new TextureRegion(new Texture("ready.png"));
 		gameOver = new TextureRegion(new Texture("gameover.png"));
 		
-		bar = new TextureRegion(new Texture("boxR.png"));
+		bar = new TextureRegion(new Texture("plane1.png"));
 		hand_right = new TextureRegion(new Texture("boxB.png"));
-		hand_left = new TextureRegion(new Texture("boxB.png"));
+		hand_left = new TextureRegion(new Texture("boxR.png"));
 		ran = new Random();
 				
 		resetWorld();
@@ -85,7 +84,7 @@ public class BarGame extends ApplicationAdapter{
 	
 	private void resetWorld() {
 		score = 0;
-		hand_rPos.set(300, 450);
+//		hand_rPos.set(300, 450);
 		hand_lPos.set(300, 450);
 		camera.position.x = 400;
 		
@@ -93,11 +92,20 @@ public class BarGame extends ApplicationAdapter{
 		
 		for(int i = 0; i < 100; i++) {
 			float r = ran.nextFloat()* 100;
-			if(r < 50){
-				r = 82;
+			
+			if(i == 0){
+				bars.add(new Bar(200, 450, bar));
 			}
-			bars.add(new Bar(i *100 + r, 450, bar));
-			System.out.println(r+"" +"/"+ i+"");
+//			else if(i == 1){
+//				bars.add(new Bar(200, 450, bar));
+//			}
+			else{
+				if(r < 50){
+					r = 82;
+				}
+				bars.add(new Bar(i *100 + r + 200, 450, bar));
+			}
+			
 		}
 		
 	}
@@ -110,7 +118,8 @@ public class BarGame extends ApplicationAdapter{
 				gameState = GameState.Running;
 			}
 			if(gameState == GameState.GameOver) {
-				gameState = GameState.Start;
+				game.dispose();
+//				gameState = GameState.Start;
 				resetWorld();
 			}
 		}
@@ -120,30 +129,36 @@ public class BarGame extends ApplicationAdapter{
 		hand_r.set(x_right, 450, 20, 20);
 		hand_l.set(x_left, 450, 20, 20);
 		
+		
 		for(Bar b: bars) {
 			if(camera.position.x - b.position.x > 650 + b.image.getRegionWidth()) {
-				b.position.x += 100 * 100;
+				b.position.x += 100 * 100 + 200;
 				b.position.y = 450;
 				b.image = bar;
-				b.counted = false;
+				System.out.println(b.position);
 			}
-			mbar_New.set(b.position.x, b.position.y, 30, 30);
-			if (!Gdx.input.isTouched()) {
-				if (hand_r.overlaps(mbar_New) && !hand_l.overlaps(mbar_Old) && count) {
-					score++;
-					System.out.println(score);
+			//mbar.set(b.position.x, b.position.y, 20, 20);
+			System.out.println(mbar.x);
+			if(!Gdx.input.isTouched()){
+				mbar.set(b.position.x, b.position.y, 20, 20);
+				System.out.println("  "+mbar.x);
+				if((hand_r.overlaps(mbar) || hand_l.overlaps(mbar)) && count){
+//					System.out.println("hand_r is : " + hand_r.x + "/" + mbar.x);
+//					System.out.println("hand_l is : " + hand_l.x + "/" + mbar.x);
+					score ++;	
 					count = false;
 				}
-				else{
-					gameState = GameState.GameOver;
-				}
-				mbar_Old = mbar_New;
-//				if (!hand_r.overlaps(mbar) && hand_l.overlaps(mbar)) {
-//					score++;
-//					System.out.println(score+"*");
+				
+//				else if((hand_r.x > mbar.x && hand_l.x > mbar.x) && count){
+//					System.out.println("!hand_c is : " + hand_check.x + "/" + mbar.x);
+//						if(gameState != GameState.GameOver){
+//							gameState = GameState.GameOver;
+//						}
 //				}
+				
 			}
-			else{ count = true; }
+			else count = true;
+			
 		}
 		
 		if (Gdx.input.justTouched()) {
