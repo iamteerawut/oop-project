@@ -24,6 +24,7 @@ public class BarGame extends ApplicationAdapter{
 	
 	Texture background;
 	TextureRegion bar;
+	TextureRegion bar2;
 	TextureRegion hand_right;
 	TextureRegion hand_left;
 	TextureRegion ready;
@@ -45,11 +46,12 @@ public class BarGame extends ApplicationAdapter{
 	
 	int check;
 	int score = 0;
-	int x_right = 100, x_left = 100;
+	int x_right = 155, x_left = 155;
 	int speed_hand = 350;
 	
 	int test = 0;
 	int s;
+	float bar_x;
 		
 	Random ran;
 	
@@ -76,7 +78,8 @@ public class BarGame extends ApplicationAdapter{
 		ready = new TextureRegion(new Texture("ready.png"));
 		gameOver = new TextureRegion(new Texture("gameover.png"));
 		
-		bar = new TextureRegion(new Texture("barTest.png"));
+		bar = new TextureRegion(new Texture("bar2.png"));
+		bar2 = new TextureRegion(new Texture("bar.png"));
 		hand_right = new TextureRegion(new Texture("boxB.png"));
 		hand_left = new TextureRegion(new Texture("boxR.png"));
 		ran = new Random();
@@ -99,12 +102,12 @@ public class BarGame extends ApplicationAdapter{
 			
 			s = (ran.nextInt(4)+1)*50;
 			if(i == 0){
-				bars.add(new Bar(200, 450, s, bar));
+				bars.add(new Bar(200, 450, s, 150, bar, bar2));
 				prev_temp = s+200+50;
 			}
 			else
 			{
-				bars.add(new Bar(prev_temp, 450, s, bar));
+				bars.add(new Bar(prev_temp, 450, s, prev_temp-40, bar, bar2));
 				prev_temp = prev_temp+s+50;
 			}	
 				//System.out.println("x : "+(i *100 + s + 50));
@@ -158,48 +161,6 @@ public class BarGame extends ApplicationAdapter{
 					count = false;
 				}
 				
-//				mbar.set(b.position.x, b.position.y, 100, 20);
-////				System.out.println("  "+mbar.x);
-//				if((hand_r.overlaps(mbar)) && count){
-//					System.out.println("hand_r is : " + hand_r.x + "/" + mbar.x);
-//					System.out.println("hand_l is : " + hand_l.x + "/" + mbar.x);
-//					test++;
-//					System.out.println("hand_r.overlaps : "+(hand_r.overlaps(mbar)));
-//					System.out.println("hand_l.overlaps : "+(hand_l.overlaps(mbar)));
-//					System.out.println("test = "+test);
-//					score ++;	
-//					count = false;
-//				}
-//				
-//				else if(hand_l.overlaps(mbar) && count){
-//					System.out.println("Lhand_r is : " + hand_r.x + "/" + mbar.x);
-//					System.out.println("Lhand_l is : " + hand_l.x + "/" + mbar.x);
-//					test++;
-//					System.out.println("Lhand_r.overlaps : "+(hand_r.overlaps(mbar)));
-//					System.out.println("Lhand_l.overlaps : "+(hand_l.overlaps(mbar)));
-//					System.out.println("Ltest = "+test);
-//					score ++;	
-//					count = false;
-//				}
-//				else if(hand_l.overlaps(mbar) == hand_r.overlaps(mbar) && score != 1){
-//					System.out.println("Lhand_r is : " + hand_r.x + "/" + mbar.x);
-//					System.out.println("Lhand_l is : " + hand_l.x + "/" + mbar.x);
-//					System.out.println("Lhand_r.overlaps : "+(hand_r.overlaps(mbar)));
-//					System.out.println("Lhand_l.overlaps : "+(hand_l.overlaps(mbar)));
-//					System.out.println("Ltest = "+test);
-//					count = false;
-//					if(gameState != GameState.GameOver){
-//						gameState = GameState.GameOver;
-//					}
-//				}
-				
-//				else if((hand_r.x > mbar.x && hand_l.x > mbar.x) && count){
-//					System.out.println("!hand_c is : " + hand_check.x + "/" + mbar.x);
-//						if(gameState != GameState.GameOver){
-//							gameState = GameState.GameOver;
-//						}
-//				}
-				
 			}
 			else count = true;
 			
@@ -229,6 +190,7 @@ public class BarGame extends ApplicationAdapter{
 		batch.draw(background, camera.position.x - background.getWidth() / 2, 0);
 		for(Bar bar: bars) {
 			batch.draw(bar.image, bar.position.x, bar.position.y, bar.size, 20);
+			batch.draw(bar.image2, bar.bar_x, bar.position.y, 40, 20);
 		}
 		batch.draw(hand_right, x_right, 450, 20, 20);
 		batch.draw(hand_left, x_left, 450, 20, 20);
@@ -260,14 +222,18 @@ public class BarGame extends ApplicationAdapter{
 	static class Bar {
 		Vector2 position = new Vector2();
 		int size;
+		float bar_x;
 		TextureRegion image;
+		TextureRegion image2;
 		boolean counted;
 		
-		public Bar(float x, float y, int size, TextureRegion image) {
+		public Bar(float x, float y, int size, float bar_x, TextureRegion image, TextureRegion image2) {
 			this.position.x = x;
 			this.position.y = y;
 			this.image = image;
+			this.image2 = image2;
 			this.size = size;
+			this.bar_x = bar_x;
 		}
 	}
 
