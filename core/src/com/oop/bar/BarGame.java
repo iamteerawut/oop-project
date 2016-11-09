@@ -46,7 +46,7 @@ public class BarGame extends ApplicationAdapter{
 	int check;
 	int score = 0;
 	int x_right = 100, x_left = 100;
-	int speed_hand = 300;
+	int speed_hand = 350;
 	
 	int test = 0;
 	int s;
@@ -97,7 +97,7 @@ public class BarGame extends ApplicationAdapter{
 			//float r = ran.nextFloat()* 100;
 			//s = 60;
 			
-			s = (ran.nextInt(6)+1)*50;
+			s = (ran.nextInt(4)+1)*50;
 			if(i == 0){
 				bars.add(new Bar(200, 450, s, bar));
 				prev_temp = s+200+50;
