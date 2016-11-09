@@ -80,8 +80,8 @@ public class BarGame extends ApplicationAdapter{
 		
 		bar = new TextureRegion(new Texture("bar2.png"));
 		bar2 = new TextureRegion(new Texture("bar.png"));
-		hand_right = new TextureRegion(new Texture("boxB.png"));
-		hand_left = new TextureRegion(new Texture("boxR.png"));
+		hand_right = new TextureRegion(new Texture("hand-gif.gif"));
+		hand_left = new TextureRegion(new Texture("hand-gif.gif"));
 		ran = new Random();
 				
 		resetWorld();
@@ -192,8 +192,8 @@ public class BarGame extends ApplicationAdapter{
 			batch.draw(bar.image, bar.position.x, bar.position.y, bar.size, 20);
 			batch.draw(bar.image2, bar.bar_x, bar.position.y, 40, 20);
 		}
-		batch.draw(hand_right, x_right, 450, 20, 20);
-		batch.draw(hand_left, x_left, 450, 20, 20);
+		batch.draw(hand_right, x_right, 450, 50, 50);
+		batch.draw(hand_left, x_left, 450, 50, 50);
 		batch.end();
 		
 		batch.setProjectionMatrix(uiCamera.combined);
