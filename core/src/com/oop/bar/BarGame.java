@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -18,11 +19,13 @@ public class BarGame extends ApplicationAdapter{
 	
 	BarProject game;
 	
+	ShapeRenderer shapeRenderer;
 	SpriteBatch batch;
 	OrthographicCamera camera;
 	OrthographicCamera uiCamera;
 	
 	Texture background;
+	Texture background2;
 	TextureRegion bar;
 	TextureRegion bar2;
 	TextureRegion hand_right;
@@ -45,15 +48,27 @@ public class BarGame extends ApplicationAdapter{
 	GameState gameState = GameState.Start;
 	
 	int check;
-	int score = 0;
-	int x_right = 155, x_left = 155;
+	int score = -1;
+	int x_right;
+	int x_left;
 	int speed_hand = 350;
-	
-	int test = 0;
 	int s;
 	float bar_x;
 		
 	Random ran;
+	/// background ///
+	public static final int DEFAULT_SPEED = 100;
+	public static final int ACCELERATION = 40;
+	public static final int GOAL_REACH_ACCELERATION = 200;
+	
+	Texture bg, bg2;
+	float x1, x2;
+	int speed;
+	int goalSpeed;
+	float imageScale;
+	boolean speedPause;
+	
+
 	
 	public BarGame(){
 		
@@ -65,16 +80,17 @@ public class BarGame extends ApplicationAdapter{
 	
 	@Override
 	public void create() {
+		
+		shapeRenderer = new ShapeRenderer();
 		batch = new SpriteBatch();
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 1280, 720);
+		camera.setToOrtho(false, 1000, 700);
 		uiCamera = new OrthographicCamera();
 		uiCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		uiCamera.update();
-		
 		font = new BitmapFont(Gdx.files.internal("arial.fnt"));
-		
-		background = new Texture("bg4.png");	
+		background = new Texture("background.png");
+		background2 = new Texture("background.png");
 		ready = new TextureRegion(new Texture("ready.png"));
 		gameOver = new TextureRegion(new Texture("gameover.png"));
 		
@@ -83,23 +99,28 @@ public class BarGame extends ApplicationAdapter{
 		hand_right = new TextureRegion(new Texture("boxB.png"));
 		hand_left = new TextureRegion(new Texture("boxR.png"));
 		ran = new Random();
-				
+		 //////////
+		x1 = 0;
+		x2 = background.getWidth();
+		speed = 0;
+		goalSpeed = DEFAULT_SPEED;
+		
 		resetWorld();
 		
 	}
 	
 	private void resetWorld() {
-		score = 0;
+		score = -1;
 		hand_rPos.set(300, 450);
 		hand_lPos.set(300, 450);
 		camera.position.x = 400;
+		x_right = 155;
+		x_left = 155;
 		
 		bars.clear();
 		int prev_temp=0;
 		for(int i = 0; i < 100; i++) {
-			//float r = ran.nextFloat()* 100;
-			//s = 60;
-			
+
 			s = (ran.nextInt(4)+1)*50;
 			if(i == 0){
 				bars.add(new Bar(200, 450, s, 150, bar, bar2));
@@ -110,33 +131,61 @@ public class BarGame extends ApplicationAdapter{
 				bars.add(new Bar(prev_temp, 450, s, prev_temp-40, bar, bar2));
 				prev_temp = prev_temp+s+50;
 			}	
-				//System.out.println("x : "+(i *100 + s + 50));
-				System.out.println("s : "+s);
-			}
-			
-		//}
+				
+		}
+
 		
 	}
 	
 	private void updateWorld() {
 		float deltaTime = Gdx.graphics.getDeltaTime();
+	
+		//// BackGround ////
+		batch.begin();
+			if (speed < goalSpeed) {
+				speed += GOAL_REACH_ACCELERATION * deltaTime;
+				if (speed > goalSpeed) {
+					speed = goalSpeed;
+				}
+				else if (speed < goalSpeed) {
+					speed -= GOAL_REACH_ACCELERATION * deltaTime;
+					if (speed < goalSpeed) {
+						speed = goalSpeed;
+					}
+				}
+			}
+			
+			x1 -= speed * Math.pow(deltaTime, 2) ;
+			x2 -= speed * Math.pow(deltaTime, 2) ;
+				
+			if (x1 + background.getWidth()<= 0) {
+					x1 = x2 + background.getWidth();
+			}
+			if (x2 + background.getWidth() <= 0) {
+				x2 = x1 + background.getWidth();
+			}
+				
+			batch.draw(background, x1, 0, background.getWidth(), background.getHeight());
+			batch.draw(background2, x2, 0, background.getWidth(), background.getHeight());
+		batch.end();
 		
 		if(Gdx.input.justTouched()) {
 			if(gameState == GameState.Start) {
 				gameState = GameState.Running;
 			}
+			if(gameState == GameState.Running) {
+				gameState = GameState.Running;
+			}
 			if(gameState == GameState.GameOver) {
-				game.dispose();
-//				gameState = GameState.Start;
+				gameState = GameState.Start;
 				resetWorld();
 			}
+			
 		}
 		
-		camera.position.x = (x_right / 2) + (x_left / 2) + 400;
-		
+		camera.position.x = ((x_right / 2) + (x_left / 2)) + 300;
 		hand_r.set(x_right, 450, 20, 20);
 		hand_l.set(x_left, 450, 20, 20);
-		
 		
 		for(Bar b: bars) {
 			if(camera.position.x - b.position.x > 1280 + b.image.getRegionWidth()) {
@@ -166,7 +215,7 @@ public class BarGame extends ApplicationAdapter{
 			
 		}
 		
-		if (Gdx.input.justTouched()) {
+		if (Gdx.input.justTouched() && gameState == GameState.Running) {
 			if (check == 0) {
 				check = 1;
 			}
@@ -174,20 +223,21 @@ public class BarGame extends ApplicationAdapter{
 				check = 0;
 			}
 		}
-		if (Gdx.input.isTouched() && check == 1){
+		if (Gdx.input.isTouched() && check == 1 && gameState == GameState.Running ){
 			x_right += deltaTime * speed_hand;
 		}
 	
-		else if (Gdx.input.isTouched() && check == 0){
+		else if (Gdx.input.isTouched() && check == 0 && gameState == GameState.Running ){
 			x_left += deltaTime * speed_hand;
 		}
 	}
 	
 	private void drawWorld() {
+		
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		batch.draw(background, camera.position.x - background.getWidth() / 2, 0);
+		//batch.draw(background, camera.position.x - (background.getWidth() / 2), 0);
 		for(Bar bar: bars) {
 			batch.draw(bar.image, bar.position.x, bar.position.y, bar.size, 20);
 			batch.draw(bar.image2, bar.bar_x, bar.position.y, 40, 20);
@@ -207,6 +257,8 @@ public class BarGame extends ApplicationAdapter{
 		if(gameState == GameState.GameOver || gameState == GameState.Running) {
 			font.draw(batch, "" + score, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 60);
 		}
+		
+		
 		batch.end();
 	}
 

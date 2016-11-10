@@ -18,15 +18,14 @@ public class ScrollingBackground {
 	
 	public ScrollingBackground() {
 		
-		bg = new Texture("bg2.png");
-		bg2 = new Texture("bg3.png");
+		bg = new Texture("bg1.png");
+		bg2 = new Texture("bg1.png");
 		
 		x1 = 0;
 		x2 = bg.getWidth();
-		
-		speed = 0;
+		speed = 10;
 		goalSpeed = DEFAULT_SPEED;
-		imageScale = BarProject.WIDTH / bg.getWidth();
+		imageScale = 1;
 		speedPause = false;
 	}
 	
