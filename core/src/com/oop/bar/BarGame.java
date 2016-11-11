@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -18,6 +19,13 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
@@ -29,6 +37,9 @@ public class BarGame extends ApplicationAdapter{
 	SpriteBatch batch;
 	OrthographicCamera camera;
 	OrthographicCamera uiCamera;
+	
+	World world;
+	Body body;
 	
 	Texture background;
 	Texture background2;
@@ -80,7 +91,9 @@ public class BarGame extends ApplicationAdapter{
 	float imageScale;
 	boolean speedPause;
 	
-
+	////
+	Texture img;
+	Sprite sprite;
 	
 	public BarGame(){
 		
@@ -134,6 +147,77 @@ public class BarGame extends ApplicationAdapter{
 		tree.add(new Texture("Tree/tree5.png"));
 		tree.add(new Texture("Tree/tree6.png"));
 		
+		/// Player ///
+		img = new Texture("flower3.png");
+		sprite = new Sprite(img);
+		sprite.setPosition(Gdx.graphics.getWidth() / 2 - sprite.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+		world = new World(new Vector2(0, -98f), true);
+		
+		Body HandR = staticBox( x_right, 450, 10, 10);
+		Body HandL = staticBox( x_left, 450, 10, 10);
+		Body ArmR = dynamicBox( x_right, 450, 10, 30);
+		Body ArmL = dynamicBox( x_left, 450, 10, 30);
+		Body Head = dynamicBox((Math.max(x_right, x_left) - Math.min(x_right, x_left))/2+Math.min(x_right, x_left), 470, 20, 20);
+		Body body = dynamicBox((Math.max(x_right, x_left) - Math.min(x_right, x_left))/2+Math.min(x_right, x_left), 450, 30, 40);
+		Body LegR = dynamicBox( x_right, 370, 10, 50);
+		Body LegL = dynamicBox( x_left, 370, 10, 50);
+		
+		DistanceJointDef defJoint = new DistanceJointDef ();
+		
+		// Head connect Body 
+      	defJoint.length = 40;
+      	defJoint.bodyA = body;
+      	defJoint.bodyB = Head;
+      	defJoint.localAnchorA.set( 0, 20);
+      	defJoint.localAnchorB.set( 0, 0);
+      	defJoint.collideConnected = true;
+      	world.createJoint(defJoint);
+		
+		// hands connect Arms
+		defJoint.collideConnected = false;
+		defJoint.length = 20;
+		defJoint.bodyA = HandR;
+		defJoint.bodyB = ArmR;
+		defJoint.localAnchorA.set( 0, 0);
+		defJoint.localAnchorB.set( 0, 20);
+		world.createJoint(defJoint);
+      
+		defJoint.bodyA = HandL;
+		defJoint.bodyB = ArmL;
+		defJoint.localAnchorA.set( 0, 0);
+		defJoint.localAnchorB.set( 0, 20);
+      	world.createJoint(defJoint);
+      	
+      	// Arm connect Body
+      	defJoint.collideConnected = false;
+      	defJoint.length = 50;
+      	defJoint.bodyA = body;
+      	defJoint.bodyB = ArmR;
+      	defJoint.localAnchorA.set( -20, 20);
+      	defJoint.localAnchorB.set( 0, -15);
+      	world.createJoint(defJoint);
+      
+      	defJoint.bodyA = body;
+      	defJoint.bodyB = ArmL;
+      	defJoint.localAnchorA.set( 20, 20);
+      	defJoint.localAnchorB.set( 0, -15);
+      	world.createJoint(defJoint);
+      	
+      	// Leg connect Body
+      	defJoint.length = 50;
+      	defJoint.bodyA = body;
+      	defJoint.bodyB = LegR;
+      	defJoint.localAnchorA.set( -15, -20);
+      	defJoint.localAnchorB.set( 0, 30);
+      	world.createJoint(defJoint);
+      
+      	defJoint.length = 50;
+      	defJoint.bodyA = body;
+      	defJoint.bodyB = LegL;
+      	defJoint.localAnchorA.set( 15, -20);
+      	defJoint.localAnchorB.set( 0, 30);
+      	world.createJoint(defJoint);
+        
 		resetWorld();
 		
 	}
@@ -172,7 +256,7 @@ public class BarGame extends ApplicationAdapter{
 			//// Random Tree ////
 			int t = ((ran.nextInt(8)+1)* 100);
 			int a = ran.nextInt(6);
-			trees.add(new Tree(i*10*t, -50, tree.get(a)));
+			trees.add(new Tree(i*10*t, -100, tree.get(a)));
 		}
 
 		
@@ -295,7 +379,7 @@ public class BarGame extends ApplicationAdapter{
 			}
 			//// Draw Building ///
 			for(Tree tre : trees){
-				batch.draw(tre.image, tre.position.x, tre.position.y, 300, 300);
+				batch.draw(tre.image, tre.position.x, tre.position.y, tre.image.getWidth(), tre.image.getHeight());
 			}			
 			
 			//// Draw Bar ////
@@ -310,13 +394,17 @@ public class BarGame extends ApplicationAdapter{
 			batch.end();
 		
 			batch.setProjectionMatrix(uiCamera.combined);
+			
+			world.step(Gdx.graphics.getDeltaTime(), 6, 2);
+	        batch.begin();
+	        batch.end();
 		
 		batch.begin();
 		//// Show State Game ////
 		
 		// Font ///
 		GlyphLayout scoreLayout = new GlyphLayout(font, "" + score, Color.WHITE, 0, Align.center, false);
-		GlyphLayout highscoreLayout = new GlyphLayout(scoreFont, "Best\n" + highscore, Color.GOLD, 0, Align.left, false);
+		GlyphLayout highscoreLayout = new GlyphLayout(scoreFont, "Best\n" + highscore, Color.BLACK, 0, Align.left, false);
 		
 		scoreFont.draw(batch, highscoreLayout, Gdx.graphics.getWidth() - 210, Gdx.graphics.getHeight() - 10);
 		font.draw(batch, scoreLayout,  Gdx.graphics.getWidth() - 50, Gdx.graphics.getHeight() - 15);
@@ -337,9 +425,10 @@ public class BarGame extends ApplicationAdapter{
 	public void render() {
 		Gdx.gl.glClearColor(0, 1, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
 		updateWorld();
 		drawWorld();
+		
+
 	}
 
 	static class Bar {
@@ -386,6 +475,44 @@ public class BarGame extends ApplicationAdapter{
 	static enum GameState {
 		Start, Running, GameOver
 	}
+	
+	public Body staticBox (Texture img, float x, float y, float w, float h){
+    	sprite = new Sprite(img);
+    	sprite.setPosition(x, y);
+		BodyDef bodyDef = new BodyDef();
+        FixtureDef fixtureDef = new FixtureDef();
+    	bodyDef.type = BodyDef.BodyType.StaticBody;
+        bodyDef.position.set(sprite.getX(), sprite.getY());
+        PolygonShape boxShape = new PolygonShape();
+        boxShape.setAsBox(sprite.getHeight(),sprite.getWidth());
+        fixtureDef.shape = boxShape;
+        fixtureDef.restitution = 0.2f;
+        fixtureDef.density = 10f;
+        fixtureDef.friction = 0.3f;
+        Fixture fixture = body.createFixture(fixtureDef);
+        boxShape.dispose();
+        body = world.createBody(bodyDef);
+        return body;
+    }
+    
+    public Body dynamicBox(Texture img, float x, float y, float w, float h){
+    	sprite = new Sprite(img);
+    	sprite.setPosition(x, y);
+		BodyDef bodyDef = new BodyDef();
+        FixtureDef fixtureDef = new FixtureDef();
+    	bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(sprite.getX(), sprite.getY());
+        PolygonShape boxShape = new PolygonShape();
+        boxShape.setAsBox(sprite.getHeight(),sprite.getWidth());
+        fixtureDef.shape = boxShape;
+        fixtureDef.restitution = 0.2f;
+        fixtureDef.density = 10f;
+        fixtureDef.friction = 0.3f;
+        Fixture fixture = body.createFixture(fixtureDef);
+        boxShape.dispose();
+        body = world.createBody(bodyDef);
+        return body;
+    }
 
 
 }
