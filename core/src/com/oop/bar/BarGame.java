@@ -4,10 +4,13 @@ import java.util.Random;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -15,6 +18,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
 public class BarGame extends ApplicationAdapter{
@@ -34,6 +38,7 @@ public class BarGame extends ApplicationAdapter{
 	TextureRegion hand_left;
 	TextureRegion ready;
 	TextureRegion gameOver;
+	BitmapFont scoreFont;
 	BitmapFont font;
 	FreeTypeFontGenerator generator;
 	FreeTypeFontParameter parameter;
@@ -56,6 +61,7 @@ public class BarGame extends ApplicationAdapter{
 	
 	int check;
 	int score = 0;
+	int highscore = 0;
 	int x_right;
 	int x_left;
 	int speed_hand = 350;
@@ -98,13 +104,15 @@ public class BarGame extends ApplicationAdapter{
 		background2 = new Texture("background.png");
 		ready = new TextureRegion(new Texture("ready.png"));
 		gameOver = new TextureRegion(new Texture("gameover.png"));
-		font = new BitmapFont(Gdx.files.internal("font/howser-48.fnt"));
+		font = new BitmapFont(Gdx.files.internal("font/howser-72.fnt"));
+		scoreFont = new BitmapFont(Gdx.files.internal("font/howser-36.fnt"));
 
 		bar = new TextureRegion(new Texture("bar2.png"));
 		bar2 = new TextureRegion(new Texture("bar.png"));
 		hand_right = new TextureRegion(new Texture("boxB.png"));
 		hand_left = new TextureRegion(new Texture("boxR.png"));
 		ran = new Random();
+		
 		// scrolling Background //
 		x1 = 0;
 		x2 = background.getWidth();
@@ -250,6 +258,13 @@ public class BarGame extends ApplicationAdapter{
 			
 		}
 		
+		Preferences prefs = Gdx.app.getPreferences("BarGame");
+		highscore = prefs.getInteger("highscore", 0);
+		if (score > highscore) {
+			prefs.putInteger("highscore", score);
+			prefs.flush();
+		}
+		
 		//// Hand Move ////
 		if (Gdx.input.justTouched() && gameState == GameState.Running) {
 			if (check == 0) {
@@ -298,16 +313,21 @@ public class BarGame extends ApplicationAdapter{
 		
 		batch.begin();
 		//// Show State Game ////
+		
+		// Font ///
+		GlyphLayout scoreLayout = new GlyphLayout(font, "" + score, Color.WHITE, 0, Align.center, false);
+		GlyphLayout highscoreLayout = new GlyphLayout(scoreFont, "HI\n" + highscore, Color.GOLD, 0, Align.center, false);
+		
+		scoreFont.draw(batch, highscoreLayout, Gdx.graphics.getWidth() - 150, Gdx.graphics.getHeight() - 10);
+		font.draw(batch, scoreLayout,  Gdx.graphics.getWidth() - 70, Gdx.graphics.getHeight() - 15);
 		if(gameState == GameState.Start) {
 			batch.draw(ready, Gdx.graphics.getWidth() / 2 - ready.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - ready.getRegionHeight() / 2);
 		}
 		if(gameState == GameState.GameOver) {
 			batch.draw(gameOver, Gdx.graphics.getWidth() / 2 - gameOver.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - gameOver.getRegionHeight() / 2);
 		}
-		if(gameState == GameState.GameOver || gameState == GameState.Running) {
-			font.draw(batch, "SCORE : " + score+"",  Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 60);
-
-		}
+//		if(gameState == GameState.GameOver || gameState == GameState.Running) {
+//		}
 		
 		
 		batch.end();
