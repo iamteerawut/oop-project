@@ -316,10 +316,10 @@ public class BarGame extends ApplicationAdapter{
 		
 		// Font ///
 		GlyphLayout scoreLayout = new GlyphLayout(font, "" + score, Color.WHITE, 0, Align.center, false);
-		GlyphLayout highscoreLayout = new GlyphLayout(scoreFont, "HI\n" + highscore, Color.GOLD, 0, Align.center, false);
+		GlyphLayout highscoreLayout = new GlyphLayout(scoreFont, "Hiscore\n: " + highscore, Color.GOLD, 0, Align.left, false);
 		
-		scoreFont.draw(batch, highscoreLayout, Gdx.graphics.getWidth() - 150, Gdx.graphics.getHeight() - 10);
-		font.draw(batch, scoreLayout,  Gdx.graphics.getWidth() - 70, Gdx.graphics.getHeight() - 15);
+		scoreFont.draw(batch, highscoreLayout, Gdx.graphics.getWidth() - 300, Gdx.graphics.getHeight() - 10);
+		font.draw(batch, scoreLayout,  Gdx.graphics.getWidth() - 50, Gdx.graphics.getHeight() - 15);
 		if(gameState == GameState.Start) {
 			batch.draw(ready, Gdx.graphics.getWidth() / 2 - ready.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - ready.getRegionHeight() / 2);
 		}
