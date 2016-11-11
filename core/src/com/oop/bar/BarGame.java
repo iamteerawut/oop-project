@@ -44,6 +44,8 @@ public class BarGame extends ApplicationAdapter{
 	Vector2 hand_lPos = new Vector2();
 	
 	Array<Bar> bars = new Array<Bar>();
+	Array<Building> building = new Array<Building>();
+	Array<Texture> build = new Array<Texture>();
 	
 	Rectangle hand_r = new Rectangle();
 	Rectangle hand_l = new Rectangle();
@@ -52,7 +54,7 @@ public class BarGame extends ApplicationAdapter{
 	GameState gameState = GameState.Start;
 	
 	int check;
-	int score = -1;
+	int score = 0;
 	int x_right;
 	int x_left;
 	int speed_hand = 350;
@@ -64,7 +66,6 @@ public class BarGame extends ApplicationAdapter{
 	public static final int DEFAULT_SPEED = 100;
 	public static final int ACCELERATION = 40;
 	public static final int GOAL_REACH_ACCELERATION = 200;
-	
 	Texture bg, bg2;
 	float x1, x2;
 	int speed;
@@ -102,29 +103,34 @@ public class BarGame extends ApplicationAdapter{
 		hand_right = new TextureRegion(new Texture("boxB.png"));
 		hand_left = new TextureRegion(new Texture("boxR.png"));
 		ran = new Random();
-		 //////////
+		// scrolling Background //
 		x1 = 0;
 		x2 = background.getWidth();
 		speed = 0;
 		goalSpeed = DEFAULT_SPEED;
-		
+		// Building //
+		build.add(new Texture("building/home.png"));
+		build.add(new Texture("building/Apartment.png"));
+		build.add(new Texture("building/mansion.png"));
 		
 		resetWorld();
 		
 	}
 	
 	private void resetWorld() {
-		score = -1;
+		score = 0;
 		hand_rPos.set(300, 450);
 		hand_lPos.set(300, 450);
 		camera.position.x = 400;
 		x_right = 155;
 		x_left = 155;
-		
 		bars.clear();
-		int prev_temp=0;
+		
+		
+		int prev_temp = 0;
+		int home_old = 0;
 		for(int i = 0; i < 100; i++) {
-
+			//// Random Bar ////
 			s = (ran.nextInt(4)+1)*50;
 			if(i == 0){
 				bars.add(new Bar(200, 450, s, 150, bar, bar2));
@@ -134,8 +140,14 @@ public class BarGame extends ApplicationAdapter{
 			{
 				bars.add(new Bar(prev_temp, 450, s, prev_temp-40, bar, bar2));
 				prev_temp = prev_temp+s+50;
-			}	
-				
+			}
+			//// random Building ////
+			int b = ((ran.nextInt(5)+1)* 500);
+			int p = ran.nextInt(3);
+			building.add(new Building(home_old, -200, build.get(p)));
+			System.out.println(home_old);
+			home_old += home_old + b + 720;
+			
 		}
 
 		
@@ -143,7 +155,6 @@ public class BarGame extends ApplicationAdapter{
 	
 	private void updateWorld() {
 		float deltaTime = Gdx.graphics.getDeltaTime();
-	
 		//// BackGround ////
 		batch.begin();
 			if (speed < goalSpeed) {
@@ -172,7 +183,8 @@ public class BarGame extends ApplicationAdapter{
 			batch.draw(background, x1, 0, background.getWidth(), background.getHeight());
 			batch.draw(background2, x2, 0, background.getWidth(), background.getHeight());
 		batch.end();
-		
+
+		//// GameState ////
 		if(Gdx.input.justTouched()) {
 			if(gameState == GameState.Start) {
 				gameState = GameState.Running;
@@ -187,10 +199,12 @@ public class BarGame extends ApplicationAdapter{
 			
 		}
 		
+		//// Set Camera ////
 		camera.position.x = ((x_right / 2) + (x_left / 2)) + 300;
 		hand_r.set(x_right, 450, 20, 20);
 		hand_l.set(x_left, 450, 20, 20);
 		
+		//// Check Touch Bar ////
 		for(Bar b: bars) {
 			if(camera.position.x - b.position.x > 1280 + b.image.getRegionWidth()) {
 				b.position.x += (s + 50);
@@ -209,7 +223,7 @@ public class BarGame extends ApplicationAdapter{
 					if(gameState != GameState.GameOver);
 					gameState = GameState.GameOver;			
 				}
-				if(b.position.x > hand_r.x && count) {
+				if(b.position.x > hand_r.x && count && gameState == GameState.Running ) {
 					score++;
 					count = false;
 				}
@@ -219,6 +233,7 @@ public class BarGame extends ApplicationAdapter{
 			
 		}
 		
+		//// Hand Move ////
 		if (Gdx.input.justTouched() && gameState == GameState.Running) {
 			if (check == 0) {
 				check = 1;
@@ -241,17 +256,26 @@ public class BarGame extends ApplicationAdapter{
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		
+		//// Draw Building ///
+			for(Building bud : building){
+				batch.draw(bud.image, bud.position.x, bud.position.y, bud.image.getWidth(), bud.image.getWidth());
+			}
+			
+		 //// Draw Bar ////
 		for(Bar bar: bars) {
 			batch.draw(bar.image, bar.position.x, bar.position.y, bar.size, 20);
 			batch.draw(bar.image2, bar.bar_x, bar.position.y, 40, 20);
 		}
+		
+		//// Draw Hand ////
 		batch.draw(hand_right, x_right, 450, 20, 20);
 		batch.draw(hand_left, x_left, 450, 20, 20);
 		batch.end();
 		
 		batch.setProjectionMatrix(uiCamera.combined);
-		batch.begin();		
+		
+		batch.begin();
+		//// Show State Game ////
 		if(gameState == GameState.Start) {
 			batch.draw(ready, Gdx.graphics.getWidth() / 2 - ready.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - ready.getRegionHeight() / 2);
 		}
@@ -291,6 +315,20 @@ public class BarGame extends ApplicationAdapter{
 			this.image2 = image2;
 			this.size = size;
 			this.bar_x = bar_x;
+		}
+	}
+	
+	static class Building {
+		Vector2 position = new Vector2();
+		int size;
+		float Building_x;
+		Texture image;
+		boolean counted;
+		
+		public Building(float x, float y, Texture image) {
+			this.position.x = x;
+			this.position.y = y;
+			this.image = image;
 		}
 	}
 
