@@ -125,7 +125,7 @@ public class BarGame extends ApplicationAdapter{
 		x_right = 155;
 		x_left = 155;
 		bars.clear();
-		
+		building.clear();
 		
 		int prev_temp = 0;
 		int home_old = 0;
@@ -142,11 +142,11 @@ public class BarGame extends ApplicationAdapter{
 				prev_temp = prev_temp+s+50;
 			}
 			//// random Building ////
-			int b = ((ran.nextInt(5)+1)* 500);
+			int b = ((ran.nextInt(5)+1)* 20);
 			int p = ran.nextInt(3);
-			building.add(new Building(home_old, -200, build.get(p)));
+			building.add(new Building(home_old, -150, build.get(p)));
 			System.out.println(home_old);
-			home_old += home_old + b + 720;
+			home_old += build.get(p).getWidth() + b;
 			
 		}
 
