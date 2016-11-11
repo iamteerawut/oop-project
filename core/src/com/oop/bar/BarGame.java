@@ -98,11 +98,8 @@ public class BarGame extends ApplicationAdapter{
 		background2 = new Texture("background.png");
 		ready = new TextureRegion(new Texture("ready.png"));
 		gameOver = new TextureRegion(new Texture("gameover.png"));
-<<<<<<< HEAD
 		font = new BitmapFont(Gdx.files.internal("font/howser-48.fnt"));
-=======
-		font = new BitmapFont(Gdx.files.internal("font/howser-36.fnt"));
->>>>>>> origin/master
+
 		bar = new TextureRegion(new Texture("bar2.png"));
 		bar2 = new TextureRegion(new Texture("bar.png"));
 		hand_right = new TextureRegion(new Texture("boxB.png"));
