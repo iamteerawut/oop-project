@@ -96,7 +96,7 @@ public class BarGame extends ApplicationAdapter{
 		background2 = new Texture("background.png");
 		ready = new TextureRegion(new Texture("ready.png"));
 		gameOver = new TextureRegion(new Texture("gameover.png"));
-		
+		font = new BitmapFont(Gdx.files.internal("howser32.fnt"));
 		bar = new TextureRegion(new Texture("bar2.png"));
 		bar2 = new TextureRegion(new Texture("bar.png"));
 		hand_right = new TextureRegion(new Texture("boxB.png"));
@@ -108,8 +108,6 @@ public class BarGame extends ApplicationAdapter{
 		speed = 0;
 		goalSpeed = DEFAULT_SPEED;
 		
-		generator = new FreeTypeFontGenerator(Gdx.files.internal("Font_howser_by_MyFavoriteEditions.ttf"));
-		parameter = new FreeTypeFontParameter();
 		
 		resetWorld();
 		
@@ -261,11 +259,7 @@ public class BarGame extends ApplicationAdapter{
 			batch.draw(gameOver, Gdx.graphics.getWidth() / 2 - gameOver.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - gameOver.getRegionHeight() / 2);
 		}
 		if(gameState == GameState.GameOver || gameState == GameState.Running) {
-			parameter.size = 50 ;
-			parameter.color = Color.WHITE ;
-			parameter.borderColor = Color.BLACK;
-			BitmapFont font = generator.generateFont(parameter); // font size 12 pixels
-			font.draw(batch, score+"",  Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 60);
+			font.draw(batch, "SCORE : " + score+"",  Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 60);
 
 		}
 		
