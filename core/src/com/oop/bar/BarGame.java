@@ -73,12 +73,12 @@ public class BarGame extends ApplicationAdapter{
 	int check;
 	int score = 0;
 	int highscore = 0;
-	int x_right;
-	int x_left;
 	int speed_hand = 350;
 	int s;
 	float bar_x;
-		
+	float x_right;
+	float x_left;	
+	
 	Random ran;
 	/// background ///
 	public static final int DEFAULT_SPEED = 100;
@@ -153,14 +153,23 @@ public class BarGame extends ApplicationAdapter{
 		sprite.setPosition(Gdx.graphics.getWidth() / 2 - sprite.getWidth() / 2, Gdx.graphics.getHeight() / 2);
 		world = new World(new Vector2(0, -98f), true);
 		
-		Body HandR = staticBox( x_right, 450, 10, 10);
-		Body HandL = staticBox( x_left, 450, 10, 10);
-		Body ArmR = dynamicBox( x_right, 450, 10, 30);
-		Body ArmL = dynamicBox( x_left, 450, 10, 30);
-		Body Head = dynamicBox((Math.max(x_right, x_left) - Math.min(x_right, x_left))/2+Math.min(x_right, x_left), 470, 20, 20);
-		Body body = dynamicBox((Math.max(x_right, x_left) - Math.min(x_right, x_left))/2+Math.min(x_right, x_left), 450, 30, 40);
-		Body LegR = dynamicBox( x_right, 370, 10, 50);
-		Body LegL = dynamicBox( x_left, 370, 10, 50);
+		Texture HR = new Texture("ANATOMY/R-Hand.png");
+		Texture HL = new Texture("ANATOMY/L-Hand.png");
+		Texture AR = new Texture("ANATOMY/R-Arm.png");
+		Texture AL = new Texture("ANATOMY/L-Arm.png");
+		Texture He = new Texture("ANATOMY/Head.png");
+		Texture bo = new Texture("ANATOMY/Body.png");
+		Texture LR = new Texture("ANATOMY/R-Leg.png");
+		Texture LL = new Texture("ANATOMY/L_Leg.png");
+		
+		Body HandR = staticBox( HR, x_right, 450, 10, 10);
+		Body HandL = staticBox( HL, x_left, 450, 10, 10);
+		Body ArmR = dynamicBox( AR, x_right, 450, 10, 30);
+		Body ArmL = dynamicBox( AL, x_left, 450, 10, 30);
+		Body Head = dynamicBox( He, (Math.max(x_right, x_left) - Math.min(x_right, x_left))/2+Math.min(x_right, x_left), 470, 20, 20);
+		Body body = dynamicBox( bo, (Math.max(x_right, x_left) - Math.min(x_right, x_left))/2+Math.min(x_right, x_left), 450, 30, 40);
+		Body LegR = dynamicBox( LR, x_right, 370, 10, 50);
+		Body LegL = dynamicBox( LL, x_left, 370, 10, 50);
 		
 		DistanceJointDef defJoint = new DistanceJointDef ();
 		
