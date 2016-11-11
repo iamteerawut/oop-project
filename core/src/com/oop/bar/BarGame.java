@@ -4,7 +4,6 @@ import java.util.Random;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -46,6 +45,8 @@ public class BarGame extends ApplicationAdapter{
 	Array<Bar> bars = new Array<Bar>();
 	Array<Building> building = new Array<Building>();
 	Array<Texture> build = new Array<Texture>();
+	Array<Tree> trees = new Array<Tree>();
+	Array<Texture> tree = new Array<Texture>();
 	
 	Rectangle hand_r = new Rectangle();
 	Rectangle hand_l = new Rectangle();
@@ -97,7 +98,7 @@ public class BarGame extends ApplicationAdapter{
 		background2 = new Texture("background.png");
 		ready = new TextureRegion(new Texture("ready.png"));
 		gameOver = new TextureRegion(new Texture("gameover.png"));
-		font = new BitmapFont(Gdx.files.internal("howser32.fnt"));
+		font = new BitmapFont(Gdx.files.internal("font/howser-48.fnt"));
 		bar = new TextureRegion(new Texture("bar2.png"));
 		bar2 = new TextureRegion(new Texture("bar.png"));
 		hand_right = new TextureRegion(new Texture("boxB.png"));
@@ -109,9 +110,20 @@ public class BarGame extends ApplicationAdapter{
 		speed = 0;
 		goalSpeed = DEFAULT_SPEED;
 		// Building //
-		build.add(new Texture("building/home.png"));
+		build.add(new Texture("building/YellowHouse.png"));
 		build.add(new Texture("building/Apartment.png"));
 		build.add(new Texture("building/mansion.png"));
+		build.add(new Texture("building/Hospital.png"));
+		build.add(new Texture("building/PostOffice.png"));
+		build.add(new Texture("building/YellowVilla.png"));
+		build.add(new Texture("building/ClockTower.png"));
+		// Tree //
+		tree.add(new Texture("Tree/tree1.png"));
+		tree.add(new Texture("Tree/tree2.png"));
+		tree.add(new Texture("Tree/tree3.png"));
+		tree.add(new Texture("Tree/tree4.png"));
+		tree.add(new Texture("Tree/tree5.png"));
+		tree.add(new Texture("Tree/tree6.png"));
 		
 		resetWorld();
 		
@@ -126,6 +138,7 @@ public class BarGame extends ApplicationAdapter{
 		x_left = 155;
 		bars.clear();
 		building.clear();
+		trees.clear();
 		
 		int prev_temp = 0;
 		int home_old = 0;
@@ -141,13 +154,16 @@ public class BarGame extends ApplicationAdapter{
 				bars.add(new Bar(prev_temp, 450, s, prev_temp-40, bar, bar2));
 				prev_temp = prev_temp+s+50;
 			}
-			//// random Building ////
+			//// Random Building ////
 			int b = ((ran.nextInt(5)+1)* 20);
-			int p = ran.nextInt(3);
+			int p = ran.nextInt(7);
 			building.add(new Building(home_old, -150, build.get(p)));
-			System.out.println(home_old);
 			home_old += build.get(p).getWidth() + b;
 			
+			//// Random Tree ////
+			int t = ((ran.nextInt(8)+1)* 100);
+			int a = ran.nextInt(6);
+			trees.add(new Tree(i*10*t, -50, tree.get(a)));
 		}
 
 		
@@ -256,23 +272,28 @@ public class BarGame extends ApplicationAdapter{
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		//// Draw Building ///
+		
+			//// Draw Building ///
 			for(Building bud : building){
-				batch.draw(bud.image, bud.position.x, bud.position.y, bud.image.getWidth(), bud.image.getWidth());
+				batch.draw(bud.image, bud.position.x, bud.position.y, bud.image.getWidth(), bud.image.getHeight());
 			}
+			//// Draw Building ///
+			for(Tree tre : trees){
+				batch.draw(tre.image, tre.position.x, tre.position.y, 300, 300);
+			}			
 			
-		 //// Draw Bar ////
-		for(Bar bar: bars) {
-			batch.draw(bar.image, bar.position.x, bar.position.y, bar.size, 20);
-			batch.draw(bar.image2, bar.bar_x, bar.position.y, 40, 20);
-		}
+			//// Draw Bar ////
+			for(Bar bar: bars) {
+				batch.draw(bar.image, bar.position.x, bar.position.y, bar.size, 20);
+				batch.draw(bar.image2, bar.bar_x, bar.position.y, 40, 20);
+			}
 		
-		//// Draw Hand ////
-		batch.draw(hand_right, x_right, 450, 20, 20);
-		batch.draw(hand_left, x_left, 450, 20, 20);
-		batch.end();
+			//// Draw Hand ////
+			batch.draw(hand_right, x_right, 450, 20, 20);
+			batch.draw(hand_left, x_left, 450, 20, 20);
+			batch.end();
 		
-		batch.setProjectionMatrix(uiCamera.combined);
+			batch.setProjectionMatrix(uiCamera.combined);
 		
 		batch.begin();
 		//// Show State Game ////
@@ -320,10 +341,7 @@ public class BarGame extends ApplicationAdapter{
 	
 	static class Building {
 		Vector2 position = new Vector2();
-		int size;
-		float Building_x;
 		Texture image;
-		boolean counted;
 		
 		public Building(float x, float y, Texture image) {
 			this.position.x = x;
@@ -331,6 +349,18 @@ public class BarGame extends ApplicationAdapter{
 			this.image = image;
 		}
 	}
+	
+	static class Tree {
+		Vector2 position = new Vector2();
+		Texture image;
+		
+		public Tree(float x, float y, Texture image) {
+			this.position.x = x;
+			this.position.y = y;
+			this.image = image;
+		}
+	}
+
 
 	static enum GameState {
 		Start, Running, GameOver
