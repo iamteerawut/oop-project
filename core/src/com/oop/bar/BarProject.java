@@ -15,6 +15,7 @@ public class BarProject extends Game {
 		batch = new SpriteBatch();
 		this.setScreen(new MenuScreen(this));
 		this.scrollbg = new ScrollingBackground();
+
 		
 	}
 	public void render () {
