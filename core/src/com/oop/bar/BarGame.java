@@ -372,6 +372,7 @@ public class BarGame extends ApplicationAdapter {
 
 		//// Set Camera ////
 		camera.position.x = ((x_right / 2) + (x_left / 2)) + 300;
+		
 		hand_r.set(x_right, 450, 20, 20);
 		hand_l.set(x_left, 450, 20, 20);
 		
@@ -438,7 +439,6 @@ public class BarGame extends ApplicationAdapter {
 		
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
-		
 		batch.begin();
 
 		//// Draw Building ///
@@ -455,15 +455,18 @@ public class BarGame extends ApplicationAdapter {
 			batch.draw(bar.image, bar.position.x, bar.position.y, bar.size, 20);
 			batch.draw(bar.image2, bar.bar_x, bar.position.y, 40, 20);
 		}
-        batch.end();
+        
+		
+		batch.end();
 		//// Draw Hand ////
-		worldcamera.update();
+		//worldcamera.update();
+		batch.setProjectionMatrix(worldcamera.combined);
 		world.step(1/60f,  6, 2);
 		HR.setPosition( x_right * PPM , (Rhand.getPosition().y * PPM) -HR.getHeight()/2 );
 		AR.setPosition( x_right * PPM , (Rarm.getPosition().y * PPM) -AR.getHeight()/2 );
         HL.setPosition( x_left*PPM, Lhand.getPosition().y*PPM);
         AL.setPosition( x_left * PPM, Larm.getPosition().y * PPM);
-        batch.setProjectionMatrix(worldcamera.combined);
+        
 
 		debugMatrix = batch.getProjectionMatrix().cpy().scale(PPM, PPM, 0);
 		batch.begin();
@@ -472,13 +475,10 @@ public class BarGame extends ApplicationAdapter {
         batch.draw(HL, HL.getX(), HL.getY(), HL.getWidth()*0.8f, HL.getHeight()*0.8f); 
         batch.draw(AL, AL.getX(), AL.getY(), AL.getWidth()*0.7f, AL.getHeight()*0.7f);
 	
-        
 		batch.end();
 		debugRenderer.render(world, debugMatrix);
 		
 		batch.setProjectionMatrix(uiCamera.combined);
-                
-        
 		batch.begin();
 		//// Show State Game ////
 
