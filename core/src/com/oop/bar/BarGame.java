@@ -46,6 +46,7 @@ public class BarGame extends ApplicationAdapter {
 	Texture background;
 	Texture background2;
 	Texture bar_up;
+	Texture[] bar_break = new Texture[2];
 	TextureRegion bar;
 	TextureRegion bar2;
 	TextureRegion hand_right;
@@ -82,6 +83,7 @@ public class BarGame extends ApplicationAdapter {
 	int highscore = 0;
 	int speed_hand = 350;
 	int s;
+	int y;
 	float bar_x;
 	float x_right;
 	float x_left;
@@ -110,6 +112,7 @@ public class BarGame extends ApplicationAdapter {
 	Sprite bo;
 	Sprite RL;
 	Sprite LL;
+	Sprite XA;
 	World world = new World(new Vector2(0, -9.81f), true);
 	
 	/// Button ///
@@ -177,6 +180,9 @@ public class BarGame extends ApplicationAdapter {
 		hand_right = new TextureRegion(new Texture("boxB.png"));
 		hand_left = new TextureRegion(new Texture("boxR.png"));
 		ran = new Random();
+		
+		bar_break[0] = new Texture("bar.png");
+		bar_break[1] = new Texture();
 
 		// scrolling Background //
 		x1 = 0;
@@ -214,6 +220,7 @@ public class BarGame extends ApplicationAdapter {
 		bo = new Sprite(new Texture("ANATOMY/Head-Body.png"));
 		RL = new Sprite(new Texture("ANATOMY/R-Leg.png"));
 		LL = new Sprite(new Texture("ANATOMY/L-Leg.png"));
+		XA = new Sprite(new Texture("ANATOMY/ExtenArm.png"));
 		
 		/// Button ///
 		credit = new Texture("button/Credit.png");
@@ -257,6 +264,7 @@ public class BarGame extends ApplicationAdapter {
 		camera.position.x = 400;
 		x_right = 155;
 		x_left = 160;
+		y = 450;
 		bars.clear();
 		building.clear();
 		trees.clear();
@@ -415,14 +423,14 @@ public class BarGame extends ApplicationAdapter {
 			mbar.set(b.position.x, b.position.y, b.size, 20);
 			if (!Gdx.input.isTouched()) {
 				if (hand_r.overlaps(mbar)) {
-					if (gameState != GameState.GameOver)
-						;
-					gameState = GameState.GameOver;
+					if (gameState != GameState.GameOver){
+						gameState = GameState.GameOver;
+					}
 				}
 				if (hand_l.overlaps(mbar)) {
-					if (gameState != GameState.GameOver)
-						;
-					gameState = GameState.GameOver;
+					if (gameState != GameState.GameOver){
+						gameState = GameState.GameOver;
+					}
 				}
 				if (b.position.x > hand_r.x && count && gameState == GameState.Running) {
 					countCom++;
@@ -485,9 +493,12 @@ public class BarGame extends ApplicationAdapter {
 			batch.draw(tre.image, tre.position.x, tre.position.y, tre.image.getWidth(), tre.image.getHeight());
 		}
 		//// Draw Body ////
-		batch.draw(AL, x_left - 15, 465 - AL.getHeight());
-		batch.draw(bo, ((Math.max(x_right, x_left) - Math.min(x_right, x_left))/2 + Math.min(x_right, x_left)) - 50, 440 - bo.getHeight());
-		batch.draw(AR, x_right - 15, 465 - AR.getHeight());
+		batch.draw(AL, x_left - 15, y + 15 - AL.getHeight());
+		batch.draw(XA, Math.min(x_right,  x_left), y + 15 - AL.getHeight() , Math.max(x_right,  x_left) - Math.min( x_right,  x_left) + 10, 30);
+		batch.draw(LL, ((Math.max(x_right, x_left) - Math.min(x_right, x_left))/2 + Math.min(x_right, x_left)) , y - 300 - LL.getHeight());
+		batch.draw(bo, ((Math.max(x_right, x_left) - Math.min(x_right, x_left))/2 + Math.min(x_right, x_left)) - 50, y - 10 - bo.getHeight());
+		batch.draw(RL, ((Math.max(x_right, x_left) - Math.min(x_right, x_left))/2 + Math.min(x_right, x_left))- 30 , y - 300 - RL.getHeight());
+		batch.draw(AR, x_right - 15, y + 15 - AR.getHeight());
 		
 		
 		//// Draw Bar ////
@@ -502,8 +513,8 @@ public class BarGame extends ApplicationAdapter {
 			batch.draw(bar.image2, bar.bar_x - 15, bar.position.y - 30, 60, 60);
 		}
          //// Draw Hand ////
-		batch.draw(HR, x_right, 450);
-		batch.draw(HL, x_left, 450);	
+		batch.draw(HR, x_right, y);
+		batch.draw(HL, x_left, y);	
 					
 		
 		batch.end();
@@ -531,6 +542,9 @@ public class BarGame extends ApplicationAdapter {
 		}
 		if (gameState == GameState.GameOver) {
 			/// Animation slide ///
+			x_right = 160;
+			x_left = 200;
+			y -= Gdx.graphics.getDeltaTime() * 800;
 			if(y_buttonF < y_textArea){
 				y_buttonF += Gdx.graphics.getDeltaTime() * 2000;
 			}
