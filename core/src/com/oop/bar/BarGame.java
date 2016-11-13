@@ -47,7 +47,7 @@ public class BarGame extends ApplicationAdapter {
 	Texture background;
 	Texture background2;
 	Texture bar_up;
-	Texture[] bar_break = new Texture[2];
+	TextureRegion[] bar_break = new TextureRegion[2];
 	TextureRegion bar;
 	TextureRegion bar2;
 	TextureRegion hand_right;
@@ -191,8 +191,8 @@ public class BarGame extends ApplicationAdapter {
 		hand_left = new TextureRegion(new Texture("boxR.png"));
 		ran = new Random();
 		
-		bar_break[0] = new Texture("bar.png");
-		bar_break[1] = new Texture();
+		bar_break[0] = new TextureRegion(new Texture("bar2.png"));
+		bar_break[1] = new TextureRegion(new Texture("Bar/break_bar.png"));
 
 		// scrolling Background //
 		x1 = 0;
@@ -320,7 +320,12 @@ public class BarGame extends ApplicationAdapter {
 		int home_old = 0;
 		for (int i = 0; i < 100; i++) {
 			//// Random Bar ////
-			s = (ran.nextInt(4) + 1) * 50;
+			s = (ran.nextInt(4) + 1) * 50;			
+			if(ran.nextFloat() < 0.1){
+				bar = bar_break[1];
+			}else{
+				bar = bar_break[0];
+			}
 			if (i == 0) {
 				bars.add(new Bar(200, 450, s, 150, bar, bar2));
 				prev_temp = s + 200 + 50;
@@ -533,7 +538,7 @@ public class BarGame extends ApplicationAdapter {
 		batch.draw(bar_up, x2 - 50, 400, background.getWidth() , bar_up.getHeight());
 		
 		for (Bar bar : bars) {
-			batch.draw(bar.image, bar.position.x , bar.position.y, bar.size, 20);
+			batch.draw(bar.image, bar.position.x + 20 , bar.position.y - 30, 60, 60);
 			batch.draw(bar.image2, bar.bar_x - 15, bar.position.y - 30, 60, 60);
 		}
          //// Draw Hand ////
@@ -562,25 +567,23 @@ public class BarGame extends ApplicationAdapter {
 		GlyphLayout highscoreBoardLayout = new GlyphLayout(scoreBoardFont, "" + highscore, Color.BLACK, 0, Align.left, false);
 		/// Game State ///
 		if (gameState == GameState.Start) {
-//<<<<<<< HEAD
+
 			batch.draw(ready, Gdx.graphics.getWidth() / 2 - ready.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - ready.getRegionHeight() / 2);
 			stateTime += Gdx.graphics.getDeltaTime();
 			currentFrame = grandPa.getKeyFrame(stateTime, true);
 			batch.draw(currentFrame, 400, 200, 1280/2, 720/2);
-//=======
+
 			batch.draw(ready, Gdx.graphics.getWidth() / 2 - ready.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - ready.getRegionHeight() / 2, ready.getRegionWidth(), ready.getRegionHeight());
-//>>>>>>> origin/master
+
 		}
 		if (gameState == GameState.GameOver) {
 			/// Animation slide ///
-<<<<<<< HEAD
 			x_right = 160;
 			x_left = 200;
 			y -= Gdx.graphics.getDeltaTime() * 800;
-			if(y_buttonF < y_textArea){
-=======
+	
 			if(y_buttonF < y_textArea && pressC != true){
->>>>>>> origin/master
+
 				y_buttonF += Gdx.graphics.getDeltaTime() * 2000;
 			}
 			if(y_button < y_textArea-30){
