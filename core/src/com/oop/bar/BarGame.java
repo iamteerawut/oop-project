@@ -541,12 +541,12 @@ public class BarGame extends ApplicationAdapter {
 						pressC = true;
 					}
 				}
-				if(Gdx.input.getX() >= (x_button) && Gdx.input.getX() <= ((x_button)+play.getWidth())){
+				if(Gdx.input.getX() >= (x_button) && Gdx.input.getX() <= ((x_button)+play.getWidth()) && Gdx.input.getY() >= game.HEIGHT-(play.getHeight()+y_button) && Gdx.input.getY() <= game.HEIGHT-y_button-50 && button_check == 2){
 					//start
 					gameState = GameState.Start;
 					resetWorld();
 				}
-				if(Gdx.input.getX() >= (x_button/0.80f) && Gdx.input.getX() <= ((x_button/0.80f)+play.getWidth())){
+				if(Gdx.input.getX() >= (x_button/0.80f) && Gdx.input.getX() <= ((x_button/0.80f)+play.getWidth()) && Gdx.input.getY() >= game.HEIGHT-(play.getHeight()+y_button) && Gdx.input.getY() <= game.HEIGHT-y_button-50 && button_check == 3){
 					//Mute or Unmute
 					//Change Animation
 					gameState = GameState.GameOver;
