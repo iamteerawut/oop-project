@@ -461,6 +461,7 @@ public class BarGame extends ApplicationAdapter {
 		else if (!Gdx.input.isTouched() && check == 0 && gameState == GameState.Running) {
 			Rhand.setAwake(false);
 			Lhand.setAwake(false);
+			//FUCK//
 //			Lhand.setLinearVelocity(0f, 0f);
 		}
 		
