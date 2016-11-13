@@ -551,14 +551,14 @@ public class BarGame extends ApplicationAdapter {
 		GlyphLayout highscoreBoardLayout = new GlyphLayout(scoreBoardFont, "" + highscore, Color.BLACK, 0, Align.left, false);
 		/// Game State ///
 		if (gameState == GameState.Start) {
-<<<<<<< HEAD
+//<<<<<<< HEAD
 			batch.draw(ready, Gdx.graphics.getWidth() / 2 - ready.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - ready.getRegionHeight() / 2);
 			stateTime += Gdx.graphics.getDeltaTime();
 			currentFrame = grandPa.getKeyFrame(stateTime, true);
 			batch.draw(currentFrame, 400, 200, 1280/2, 720/2);
-=======
+//=======
 			batch.draw(ready, Gdx.graphics.getWidth() / 2 - ready.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - ready.getRegionHeight() / 2, ready.getRegionWidth(), ready.getRegionHeight());
->>>>>>> origin/master
+//>>>>>>> origin/master
 		}
 		if (gameState == GameState.GameOver) {
 			/// Animation slide ///
