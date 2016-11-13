@@ -126,7 +126,7 @@ public class BarGame extends ApplicationAdapter {
 	Body Bod;
 	Body Rleg;
 	Body Lleg;
-	World world = new World(new Vector2(0, -2f), true);
+	World world = new World(new Vector2(0, -9.81f), true);
 	
 	/// Button ///
 		public static final int BUTTON_WIDTH = 100;
@@ -259,25 +259,10 @@ public class BarGame extends ApplicationAdapter {
         Rhandshape.setAsBox(HR.getWidth()/2/PPM, HR.getHeight()/2/PPM);
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = Rhandshape;
-        fixtureDef.density = 20f;
-        fixtureDef.friction = 1f;
+        fixtureDef.density = 5f;
         Rhand.createFixture(fixtureDef);
         
-		
-//        HL.setPosition(200/PPM, 450/PPM);
-        HL.setPosition( (x_left), 490);
-		L_hand = new BodyDef();
-		L_hand.type = BodyDef.BodyType.DynamicBody;
-		L_hand.position.set((HL.getX() + HL.getWidth()/2)/PPM, (HL.getY() + HL.getHeight()/2)/PPM);
-		Lhand = world.createBody(L_hand);
-		PolygonShape shapeLhand = new PolygonShape();
-		shapeLhand.setAsBox(HL.getWidth()/2/PPM, HL.getHeight()/2/PPM);
-		FixtureDef fixLhand = new FixtureDef();
-		fixLhand.shape = shapeLhand;
-		fixLhand.density = 20f;
-		Lhand.createFixture(fixLhand);
-		
-		
+
 		AR.setPosition(AR.getWidth()/2, AR.getHeight()/2);
 		R_arm = new BodyDef();
 		R_arm.type = BodyDef.BodyType.DynamicBody;
@@ -290,6 +275,20 @@ public class BarGame extends ApplicationAdapter {
         fixRarm.density = 1f;
         fixRarm.friction = 1f;
 		Rarm.createFixture(fixRarm);
+		
+//        HL.setPosition(200/PPM, 450/PPM);
+        HL.setPosition( (x_left), 490);
+		L_hand = new BodyDef();
+		L_hand.type = BodyDef.BodyType.DynamicBody;
+		L_hand.position.set((HL.getX() + HL.getWidth()/2)/PPM, (HL.getY() + HL.getHeight()/2)/PPM);
+		Lhand = world.createBody(L_hand);
+		PolygonShape shapeLhand = new PolygonShape();
+		shapeLhand.setAsBox(HL.getWidth()/2/PPM, HL.getHeight()/2/PPM);
+		FixtureDef fixLhand = new FixtureDef();
+		fixLhand.shape = shapeLhand;
+		fixLhand.density = 5f;
+		Lhand.createFixture(fixLhand);
+		
 		
 		AL.setPosition(AL.getWidth()/2, AL.getHeight()/2);
 		L_arm = new BodyDef();
@@ -355,7 +354,7 @@ public class BarGame extends ApplicationAdapter {
 		
 		DistanceJointDef ddef2 = new DistanceJointDef();
 		ddef2.length = 0/PPM;
-		ddef2.collideConnected = false;
+		ddef2.collideConnected = true;
 		ddef2.bodyA = Lhand;
 		ddef2.bodyB = Larm;
 		ddef2.localAnchorA.set(0, 0);
@@ -363,8 +362,8 @@ public class BarGame extends ApplicationAdapter {
 		world.createJoint(ddef2);
 		
 		DistanceJointDef ddef3 = new DistanceJointDef();
-		ddef3.length = 1/PPM;
-		ddef3.collideConnected = false;
+		ddef3.length = 20/PPM;
+		ddef3.collideConnected = true;
 		ddef3.bodyA = Bod;
 		ddef3.bodyB = Larm;
 		ddef3.localAnchorA.set( 25/PPM, 70/PPM);
@@ -378,14 +377,14 @@ public class BarGame extends ApplicationAdapter {
 		
 		
 		DistanceJointDef ddef4 = new DistanceJointDef();
-		ddef4.length = 1/PPM;
-		ddef4.collideConnected = false;
+		ddef4.length = 20/PPM;
+		ddef4.collideConnected = true;
 		ddef4.bodyA = Bod;
 		ddef4.bodyB = Rleg;
 		ddef4.localAnchorA.set( -10/PPM, -bo.getHeight()/2/PPM*0.6f);
 		ddef4.localAnchorB.set( 0/PPM, (RL.getHeight()/2)/PPM*0.7f);
 		world.createJoint(ddef4);
-		ddef4.collideConnected = false;
+		ddef4.collideConnected = true;
 		ddef4.bodyA = Bod;
 		ddef4.bodyB = Lleg;
 		ddef4.localAnchorA.set( 20/PPM, -bo.getHeight()/2/PPM*0.6f);
@@ -442,6 +441,8 @@ public class BarGame extends ApplicationAdapter {
 		building.clear();
 		trees.clear();
 		
+		
+		
 		if (mute == true) {
 			bgmusic.stop();
 		}
@@ -450,10 +451,7 @@ public class BarGame extends ApplicationAdapter {
 			bgmusic.play();
 		}
 	    
-	    HR.setPosition( x_right , 450);
-	    HL.setPosition( x_left , 450);
-	    R_hand.position.set((HR.getX()+ HR.getWidth()/2)/PPM, (HR.getY()+HR.getHeight()/2)/PPM);
-		L_hand.position.set((HL.getX() + HL.getWidth()/2)/PPM, (HL.getY() + HL.getHeight()/2)/PPM);
+	    
 		/// reset animation button
 		y_button = -(text_area.getHeight());
 		y_buttonF = -(text_area.getHeight());
@@ -631,12 +629,17 @@ public class BarGame extends ApplicationAdapter {
 		}
 		if (Gdx.input.isTouched() && check == 1 && gameState == GameState.Running) {
 			x_right += deltaTime * speed_hand;
-			Rhand.setLinearVelocity( deltaTime * speed_hand, 0f);
+			HR.setPosition( x_right , 470);
+	        R_hand = new BodyDef();
+	        R_hand.type = BodyDef.BodyType.DynamicBody;
+	        R_hand.position.set((HR.getX()+HR.getWidth()/2)/PPM, (HR.getY()+HR.getHeight()/2)/PPM);
+	        Rhand = world.createBody(R_hand);
+//			Rhand.setLinearVelocity( deltaTime * speed_hand , 0f);
 		}
 
 		else if (Gdx.input.isTouched() && check == 0 && gameState == GameState.Running) {
 			x_left += deltaTime * speed_hand;
-			Lhand.setLinearVelocity( deltaTime * speed_hand, 0f);//(deltaTime*speed_hand, 0f, true);
+			Lhand.setLinearVelocity( deltaTime * speed_hand , 0f);//(deltaTime*speed_hand, 0f, true);
 		}
 		
 //		if (!Gdx.input.isTouched() && gameState == GameState.Running) {
@@ -675,24 +678,21 @@ public class BarGame extends ApplicationAdapter {
 		
 		//// Draw Hand ////
 		worldcamera.update();
-		world.step(1/60f,  6, 2);
+		world.step(Gdx.graphics.getDeltaTime(),  6, 2);
 		batch.setProjectionMatrix(worldcamera.combined);		
 		
 		//		Rhand.setLinearVelocity(x_right, 0f);
-		HR.setPosition((Rhand.getPosition().x * PPM) - HR.getWidth()/2, (Rhand.getPosition().y * PPM) -HR.getHeight()/2 );
+		HR.setPosition((Rarm.getPosition().x * PPM) - HR.getWidth()/2, (Rhand.getPosition().y * PPM) -HR.getHeight()/2 );
 		HL.setPosition((Lhand.getPosition().x * PPM) - HL.getWidth()/2, (Lhand.getPosition().y * PPM) -HL.getHeight()/2 );
-
-        AR.setPosition((Rarm.getPosition().x * PPM) - AR.getWidth()/2, (Rarm.getPosition().y * PPM) -AR.getHeight()/2 );// , (Rarm.getAngle()*PPM) - AR.getWidth()/2);
-        AR.setRotation((float)Math.toDegrees(Rarm.getAngle()));
  
         AL.setPosition((Larm.getPosition().x * PPM) - AL.getWidth()/2, (Larm.getPosition().y * PPM) -AL.getHeight()/2 +20);
         AL.setRotation((float)Math.toDegrees(Larm.getAngle()));
-
+        
+        AR.setPosition((Rarm.getPosition().x * PPM) - AR.getWidth()/2, (Rarm.getPosition().y * PPM) -AR.getHeight()/2 );// , (Rarm.getAngle()*PPM) - AR.getWidth()/2);
+        AR.setRotation((float)Math.toDegrees(Rarm.getAngle()));
+        
         bo.setPosition( (Bod.getPosition().x * PPM) - bo.getWidth()/2, (Bod.getPosition().y * PPM) -bo.getHeight()/2 + 50 );
         bo.setRotation((float)Math.toDegrees(Bod.getAngle()));
- 
-//        He.setPosition( (head.getPosition().x * PPM) - He.getWidth()/2, (head.getPosition().y * PPM) -He.getHeight()/2 );
-//        He.setRotation((float)Math.toDegrees(head.getAngle()));
         
         RL.setPosition( (Rleg.getPosition().x * PPM) - RL.getWidth()/2, (Rleg.getPosition().y * PPM) -RL.getHeight()/2 );
         RL.setRotation((float)Math.toDegrees(Rleg.getAngle()));
@@ -702,12 +702,11 @@ public class BarGame extends ApplicationAdapter {
         
         debugMatrix = batch.getProjectionMatrix().cpy().scale(PPM, PPM, 0);
         batch.begin();
-		batch.draw(HR, HR.getX(), HR.getY(), HR.getWidth(), HR.getHeight());
         batch.draw(HL, HL.getX(), HL.getY(), HL.getWidth(), HL.getHeight());      
-        batch.draw(AL, AL.getX(), AL.getY(),AL.getOriginX(), AL.getOriginY(), AL.getWidth(),AL.getHeight(),AL.getScaleX(),AL.getScaleY(),AL.getRotation());       
-//        batch.draw(He, He.getX(), He.getY(),He.getOriginX(), He.getOriginY(), He.getWidth(),He.getHeight(),He.getScaleX(),He.getScaleY(),He.getRotation());
+        batch.draw(AL, AL.getX(), AL.getY(),AL.getOriginX(), AL.getOriginY(), AL.getWidth(),AL.getHeight(),AL.getScaleX(),AL.getScaleY(),AL.getRotation());       //        batch.draw(He, He.getX(), He.getY(),He.getOriginX(), He.getOriginY(), He.getWidth(),He.getHeight(),He.getScaleX(),He.getScaleY(),He.getRotation());
         batch.draw(LL, LL.getX(), LL.getY(),LL.getOriginX(), LL.getOriginY(), LL.getWidth(),LL.getHeight(),LL.getScaleX(),LL.getScaleY(),LL.getRotation());
         batch.draw(bo, bo.getX(), bo.getY(),bo.getOriginX(), bo.getOriginY(), bo.getWidth(),bo.getHeight(),bo.getScaleX(),bo.getScaleY(),bo.getRotation());
+		batch.draw(HR, HR.getX(), HR.getY(), HR.getWidth(), HR.getHeight());
         batch.draw(AR, AR.getX(), AR.getY(),AR.getOriginX(), AR.getOriginY(), AR.getWidth(),AR.getHeight(),AR.getScaleX(),AR.getScaleY(),AR.getRotation());
         batch.draw(RL, RL.getX(), RL.getY(),RL.getOriginX(), RL.getOriginY(), RL.getWidth(),RL.getHeight(),RL.getScaleX(),RL.getScaleY(),RL.getRotation());
 		batch.end();
