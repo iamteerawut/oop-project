@@ -129,29 +129,37 @@ public class BarGame extends ApplicationAdapter {
 	World world = new World(new Vector2(0, -9.81f), true);
 	
 	/// Button ///
-		public static final int BUTTON_WIDTH = 100;
-		Texture credit;
-		Texture credit_press;
-		Texture play;
-		Texture play_press;
-		Texture sound_l;
-		Texture sound_l_press;
-		Texture sound_m;
-		Texture sound_m_press;
-		Texture text_area;
-		Texture txt_credit;
-		Texture txt_mute;
-		Texture txt_play_again;
-		Texture txt_unmute;
-		float x_button;
-		float y_button;
-		float y_buttonF;
-		float y_textArea;
-		int button_check;
-		boolean press;
-		boolean pressC;
-		ButtonMute buttonMute;
-		ButtonCredit buttonCredit;
+	public static final int BUTTON_WIDTH = 100;
+	Texture credit;
+	Texture credit_press;
+	Texture play;
+	Texture play_press;
+	Texture sound_l;
+	Texture sound_l_press;
+	Texture sound_m;
+	Texture sound_m_press;
+	Texture text_area;
+	Texture txt_credit;
+	Texture txt_mute;
+	Texture txt_play_again;
+	Texture txt_unmute;
+	float x_button;
+	float y_button;
+	float y_buttonF;
+	float y_textArea;
+	int button_check;
+	boolean press;
+	boolean pressC;
+	ButtonMute buttonMute;
+	ButtonCredit buttonCredit;
+	
+	/// Count Combo ///
+	int countCom;
+	int countComNew;
+	
+	/// Font ///
+	BitmapFont scoreBoardFont;
+	BitmapFont fontBoard;
 
 	public BarGame() {
 
@@ -406,12 +414,12 @@ public class BarGame extends ApplicationAdapter {
 		credit = new Texture("button/Credit.png");
 		credit_press = new Texture("button/Credit_Press.png");
 		play = new Texture("button/Play.png");
-		play_press = new Texture("button/Play_Press.png");
+//		play_press = new Texture("button/Play_Press.png");
 		sound_l = new Texture("button/New_Sound_L.png");
-		sound_l_press = new Texture("button/Sound_L_Press.png");
-		sound_m = new Texture("button/Sound_M.png");
+//		sound_l_press = new Texture("button/Sound_L_Press.png");
+//		sound_m = new Texture("button/Sound_M.png");
 		sound_m_press = new Texture("button/New_Sound_M_Press.png");
-		text_area = new Texture("button/Text_area.png");
+		text_area = new Texture("button/Text_Area_New.png");
 		txt_credit = new Texture("button/Txt_Credit.png");
 		txt_mute = new Texture("button/Txt_Mute.png");
 		txt_play_again = new Texture("button/Txt_PlayAgain.png");
@@ -425,6 +433,14 @@ public class BarGame extends ApplicationAdapter {
 		pressC = false;
 		buttonMute = new ButtonMute(sound_l, x_button/0.80f, y_button+play.getHeight(), txt_mute);
 		buttonCredit = new ButtonCredit(credit, x_button*0.75f, y_button+play.getHeight());
+		
+		/// Count Combo ///
+		countCom = 0;
+		countComNew = 3;
+		
+		/// BoardFont ///
+		fontBoard = new BitmapFont(Gdx.files.internal("font/howser-72.fnt"));
+		scoreBoardFont= new BitmapFont(Gdx.files.internal("font/howser-48.fnt"));
 		
 		resetWorld();
 	}
@@ -458,6 +474,10 @@ public class BarGame extends ApplicationAdapter {
 		button_check = 0;
 		buttonMute.position.y = y_button;
 		buttonCredit.position.y = y_button;
+		
+		/// Count Combo ///
+		countCom = 0;
+		countComNew = 3;
 
 		int prev_temp = 0;
 		int home_old = 0;
@@ -524,7 +544,7 @@ public class BarGame extends ApplicationAdapter {
 				gameState = GameState.Running;
 			}
 			if (gameState == GameState.GameOver) {
-				if(Gdx.input.getX() >= (x_button*0.75f) && Gdx.input.getX() <= ((x_button*0.75f)+play.getWidth()) && Gdx.input.getY() >= game.HEIGHT-(play.getHeight()+y_button) && Gdx.input.getY() <= game.HEIGHT-y_button-50 && button_check == 1){
+				if(Gdx.input.getX() >= (x_button*0.75f) && Gdx.input.getX() <= ((x_button*0.75f)+play.getWidth()) && Gdx.input.getY() >= Gdx.graphics.getHeight()-(play.getHeight()+y_button) && Gdx.input.getY() <= Gdx.graphics.getHeight()-y_button*0.99f){
 					//to credit page and Animation
 					//determine parameter save state
 					gameState = GameState.GameOver;
@@ -541,12 +561,12 @@ public class BarGame extends ApplicationAdapter {
 						pressC = true;
 					}
 				}
-				if(Gdx.input.getX() >= (x_button) && Gdx.input.getX() <= ((x_button)+play.getWidth()) && Gdx.input.getY() >= game.HEIGHT-(play.getHeight()+y_button) && Gdx.input.getY() <= game.HEIGHT-y_button-50 && button_check == 2){
+				if(Gdx.input.getX() >= (x_button) && Gdx.input.getX() <= ((x_button)+play.getWidth()) && Gdx.input.getY() >= Gdx.graphics.getHeight()-(play.getHeight()+y_button) && Gdx.input.getY() <= Gdx.graphics.getHeight()-y_button*0.99f){
 					//start
 					gameState = GameState.Start;
 					resetWorld();
 				}
-				if(Gdx.input.getX() >= (x_button/0.80f) && Gdx.input.getX() <= ((x_button/0.80f)+play.getWidth()) && Gdx.input.getY() >= game.HEIGHT-(play.getHeight()+y_button) && Gdx.input.getY() <= game.HEIGHT-y_button-50 && button_check == 3){
+				if(Gdx.input.getX() >= (x_button/0.80f) && Gdx.input.getX() <= ((x_button/0.80f)+play.getWidth()) && Gdx.input.getY() >= Gdx.graphics.getHeight()-(play.getHeight()+y_button) && Gdx.input.getY() <= Gdx.graphics.getHeight()-y_button*0.99f){
 					//Mute or Unmute
 					//Change Animation
 					gameState = GameState.GameOver;
@@ -603,6 +623,12 @@ public class BarGame extends ApplicationAdapter {
 					gameState = GameState.GameOver;
 				}
 				if (b.position.x > hand_r.x && count && gameState == GameState.Running) {
+					countCom++;
+					if(countCom == countComNew){
+						countCom = 0;
+						score += countComNew;
+						countComNew += 2;
+					}
 					score++;
 					count = false;
 				}
@@ -718,6 +744,11 @@ public class BarGame extends ApplicationAdapter {
 
 		scoreFont.draw(batch, highscoreLayout, Gdx.graphics.getWidth() - 210, Gdx.graphics.getHeight() - 10);
 		font.draw(batch, scoreLayout, Gdx.graphics.getWidth() - 50, Gdx.graphics.getHeight() - 15);
+		
+		/// Font Board ///
+		GlyphLayout scoreBoardLayout = new GlyphLayout(fontBoard, "" + score, Color.BLACK, 0, Align.center, false);
+		GlyphLayout highscoreBoardLayout = new GlyphLayout(scoreBoardFont, "" + highscore, Color.BLACK, 0, Align.left, false);
+		/// Game State ///
 		if (gameState == GameState.Start) {
 			batch.draw(ready, Gdx.graphics.getWidth() / 2 - ready.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - ready.getRegionHeight() / 2);
 		}
@@ -731,10 +762,11 @@ public class BarGame extends ApplicationAdapter {
 				buttonMute.position.y = y_button;
 				buttonCredit.position.y = y_button;
 			}
-			//batch.draw(gameOver, Gdx.graphics.getWidth() / 2 - gameOver.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - gameOver.getRegionHeight() / 2);
-			batch.draw(text_area, game.WIDTH/2-text_area.getWidth()/2, y_buttonF);
-
-			/// Animation button when mouse pass show message			
+			batch.draw(gameOver, Gdx.graphics.getWidth() / 2 - gameOver.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - gameOver.getRegionHeight() / 2);
+			batch.draw(text_area, Gdx.graphics.getWidth()/2-text_area.getWidth()/2, y_buttonF);
+			font.draw(batch, scoreBoardLayout, Gdx.graphics.getWidth()/2-5, y_button+400);
+			scoreFont.draw(batch, highscoreBoardLayout, Gdx.graphics.getWidth()/2-35, y_button+230);
+			/// Animation button when mouse pass show message		
 			if(Gdx.input.getX() >= (x_button*0.75f) && Gdx.input.getX() <= ((x_button*0.75f)+play.getWidth())){
 				button_check = 1;
 			}
@@ -745,13 +777,13 @@ public class BarGame extends ApplicationAdapter {
 				button_check = 3;
 			}
 			/// Button credit ///
-			if(Gdx.input.getX() >= (x_button*0.75f) && Gdx.input.getX() <= ((x_button*0.75f)+play.getWidth()) && Gdx.input.getY() >= game.HEIGHT-(play.getHeight()+y_button) && Gdx.input.getY() <= game.HEIGHT-y_button-50 && button_check == 1){
+			if(Gdx.input.getX() >= (x_button*0.75f) && Gdx.input.getX() <= ((x_button*0.75f)+play.getWidth()) && Gdx.input.getY() >= Gdx.graphics.getHeight()-(play.getHeight()+y_button) && Gdx.input.getY() <= Gdx.graphics.getHeight()-y_button*0.99f && button_check == 1){
 				batch.draw(buttonCredit.image, buttonCredit.position.x, buttonCredit.position.y);
 				batch.draw(txt_credit, x_button*0.75f, y_button+play.getHeight());
 			}
 			batch.draw(buttonCredit.image, buttonCredit.position.x, buttonCredit.position.y);
 			/// Button play again ///
-			if(Gdx.input.getX() >= (x_button) && Gdx.input.getX() <= ((x_button)+play.getWidth()) && Gdx.input.getY() >= game.HEIGHT-(play.getHeight()+y_button) && Gdx.input.getY() <= game.HEIGHT-y_button-50 && button_check == 2){
+			if(Gdx.input.getX() >= (x_button) && Gdx.input.getX() <= ((x_button)+play.getWidth()) && Gdx.input.getY() >= Gdx.graphics.getHeight()-(play.getHeight()+y_button) && Gdx.input.getY() <= Gdx.graphics.getHeight()-y_button*0.99f && button_check == 2){
 				batch.draw(play, x_button, y_button);
 				batch.draw(txt_play_again, x_button-25, y_button+play.getHeight());
 			}
@@ -759,7 +791,7 @@ public class BarGame extends ApplicationAdapter {
 				batch.draw(play, x_button, y_button);
 			}
 			/// Button mute and unmute ///
-			if(Gdx.input.getX() >= (x_button/0.80f) && Gdx.input.getX() <= ((x_button/0.80f)+play.getWidth()) && Gdx.input.getY() >= game.HEIGHT-(play.getHeight()+y_button) && Gdx.input.getY() <= game.HEIGHT-y_button-50 && button_check == 3){
+			if(Gdx.input.getX() >= (x_button/0.80f) && Gdx.input.getX() <= ((x_button/0.80f)+play.getWidth()) && Gdx.input.getY() >= Gdx.graphics.getHeight()-(play.getHeight()+y_button) && Gdx.input.getY() <= Gdx.graphics.getHeight()-y_button*0.99f && button_check == 3){
 				batch.draw(buttonMute.image, buttonMute.position.x, buttonMute.position.y);
 				batch.draw(buttonMute.txt, x_button/0.80f, y_button+play.getHeight());
 			}
