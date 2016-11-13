@@ -60,6 +60,8 @@ public class BarGame extends ApplicationAdapter {
 
 	Vector2 hand_rPos = new Vector2();
 	Vector2 hand_lPos = new Vector2();
+	Vector2 movement = new Vector2();
+	Vector2 movement2 = new Vector2();
 
 	Array<Bar> bars = new Array<Bar>();
 	Array<Building> building = new Array<Building>();
@@ -425,11 +427,12 @@ public class BarGame extends ApplicationAdapter {
 		}
 		if (Gdx.input.isTouched() && check == 1 && gameState == GameState.Running) {
 			x_right += deltaTime * speed_hand;
-			Rarm.applyForceToCenter(0f,10f,true);
+			movement.x = 500;
 		}
 
 		else if (Gdx.input.isTouched() && check == 0 && gameState == GameState.Running) {
 			x_left += deltaTime * speed_hand;
+			movement2.x = 500;
 		}
 		
 		
@@ -461,7 +464,9 @@ public class BarGame extends ApplicationAdapter {
 		//// Draw Hand ////
 		//worldcamera.update();
 		batch.setProjectionMatrix(worldcamera.combined);
-		world.step(1/60f,  6, 2);
+		Rarm.applyForceToCenter(movement, true);
+		Larm.applyForceToCenter(movement2, true);
+		world.step(1/60f,  8, 3);
 		HR.setPosition( x_right * PPM , (Rhand.getPosition().y * PPM) -HR.getHeight()/2 );
 		AR.setPosition( x_right * PPM , (Rarm.getPosition().y * PPM) -AR.getHeight()/2 );
         HL.setPosition( x_left*PPM, Lhand.getPosition().y*PPM);
