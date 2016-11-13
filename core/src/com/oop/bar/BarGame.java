@@ -524,7 +524,7 @@ public class BarGame extends ApplicationAdapter {
 				gameState = GameState.Running;
 			}
 			if (gameState == GameState.GameOver) {
-				if(Gdx.input.getX() >= (x_button*0.75f) && Gdx.input.getX() <= ((x_button*0.75f)+play.getWidth())){
+				if(Gdx.input.getX() >= (x_button*0.75f) && Gdx.input.getX() <= ((x_button*0.75f)+play.getWidth()) && Gdx.input.getY() >= game.HEIGHT-(play.getHeight()+y_button) && Gdx.input.getY() <= game.HEIGHT-y_button-50 && button_check == 1){
 					//to credit page and Animation
 					//determine parameter save state
 					gameState = GameState.GameOver;
