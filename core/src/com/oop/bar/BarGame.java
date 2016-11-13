@@ -354,8 +354,8 @@ public class BarGame extends ApplicationAdapter {
 		txt_mute = new Texture("button/Txt_Mute.png");
 		txt_play_again = new Texture("button/Txt_PlayAgain.png");
 		txt_unmute = new Texture("button/Txt_UnMute.png");
-		x_button = 640-(play.getWidth()/2);
-		y_textArea = (720/2-text_area.getWidth()/2);
+		x_button = (game.WIDTH/2)-(play.getWidth()/2);
+		y_textArea = ((game.HEIGHT/2)-text_area.getWidth()/2);
 		y_button = -(text_area.getHeight());
 		y_buttonF = -(text_area.getHeight());
 		button_check = 0;
@@ -635,14 +635,12 @@ public class BarGame extends ApplicationAdapter {
 
 		// Font ///
 		GlyphLayout scoreLayout = new GlyphLayout(font, "" + score, Color.WHITE, 0, Align.center, false);
-		GlyphLayout highscoreLayout = new GlyphLayout(scoreFont, "Best\n" + highscore, Color.BLACK, 0, Align.left,
-				false);
+		GlyphLayout highscoreLayout = new GlyphLayout(scoreFont, "Best\n" + highscore, Color.BLACK, 0, Align.left, false);
 
 		scoreFont.draw(batch, highscoreLayout, Gdx.graphics.getWidth() - 210, Gdx.graphics.getHeight() - 10);
 		font.draw(batch, scoreLayout, Gdx.graphics.getWidth() - 50, Gdx.graphics.getHeight() - 15);
 		if (gameState == GameState.Start) {
-			batch.draw(ready, Gdx.graphics.getWidth() / 2 - ready.getRegionWidth() / 2,
-					Gdx.graphics.getHeight() / 2 - ready.getRegionHeight() / 2);
+			batch.draw(ready, Gdx.graphics.getWidth() / 2 - ready.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - ready.getRegionHeight() / 2);
 		}
 		if (gameState == GameState.GameOver) {
 			/// Animation slide ///
@@ -655,7 +653,7 @@ public class BarGame extends ApplicationAdapter {
 				buttonCredit.position.y = y_button;
 			}
 			batch.draw(gameOver, Gdx.graphics.getWidth() / 2 - gameOver.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - gameOver.getRegionHeight() / 2);
-			batch.draw(text_area, 640-text_area.getWidth()/2, y_buttonF);
+			batch.draw(text_area, game.WIDTH/2-text_area.getWidth()/2, y_buttonF);
 
 			/// Animation button when mouse pass show message			
 			if(Gdx.input.getX() >= (x_button*0.75f) && Gdx.input.getX() <= ((x_button*0.75f)+play.getWidth())){
@@ -668,13 +666,13 @@ public class BarGame extends ApplicationAdapter {
 				button_check = 3;
 			}
 			/// Button credit ///
-			if(Gdx.input.getX() >= (x_button*0.75f) && Gdx.input.getX() <= ((x_button*0.75f)+play.getWidth()) && Gdx.input.getY() >= 720-(play.getHeight()+y_button) && Gdx.input.getY() <= 720-y_button-50 && button_check == 1){
+			if(Gdx.input.getX() >= (x_button*0.75f) && Gdx.input.getX() <= ((x_button*0.75f)+play.getWidth()) && Gdx.input.getY() >= game.HEIGHT-(play.getHeight()+y_button) && Gdx.input.getY() <= game.HEIGHT-y_button-50 && button_check == 1){
 				batch.draw(buttonCredit.image, buttonCredit.position.x, buttonCredit.position.y);
 				batch.draw(txt_credit, x_button*0.75f, y_button+play.getHeight());
 			}
 			batch.draw(buttonCredit.image, buttonCredit.position.x, buttonCredit.position.y);
 			/// Button play again ///
-			if(Gdx.input.getX() >= (x_button) && Gdx.input.getX() <= ((x_button)+play.getWidth()) && Gdx.input.getY() >= 720-(play.getHeight()+y_button) && Gdx.input.getY() <= 720-y_button-50 && button_check == 2){
+			if(Gdx.input.getX() >= (x_button) && Gdx.input.getX() <= ((x_button)+play.getWidth()) && Gdx.input.getY() >= game.HEIGHT-(play.getHeight()+y_button) && Gdx.input.getY() <= game.HEIGHT-y_button-50 && button_check == 2){
 				batch.draw(play, x_button, y_button);
 				batch.draw(txt_play_again, x_button-25, y_button+play.getHeight());
 			}
@@ -682,7 +680,7 @@ public class BarGame extends ApplicationAdapter {
 				batch.draw(play, x_button, y_button);
 			}
 			/// Button mute and unmute ///
-			if(Gdx.input.getX() >= (x_button/0.80f) && Gdx.input.getX() <= ((x_button/0.80f)+play.getWidth()) && Gdx.input.getY() >= 720-(play.getHeight()+y_button) && Gdx.input.getY() <= 720-y_button-50 && button_check == 3){
+			if(Gdx.input.getX() >= (x_button/0.80f) && Gdx.input.getX() <= ((x_button/0.80f)+play.getWidth()) && Gdx.input.getY() >= game.HEIGHT-(play.getHeight()+y_button) && Gdx.input.getY() <= game.HEIGHT-y_button-50 && button_check == 3){
 				batch.draw(buttonMute.image, buttonMute.position.x, buttonMute.position.y);
 				batch.draw(buttonMute.txt, x_button/0.80f, y_button+play.getHeight());
 			}
