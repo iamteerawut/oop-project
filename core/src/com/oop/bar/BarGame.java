@@ -125,6 +125,31 @@ public class BarGame extends ApplicationAdapter {
 	Body Rleg;
 	Body Lleg;
 	World world = new World(new Vector2(0, -9.8f), true);
+	
+	/// Button ///
+		public static final int BUTTON_WIDTH = 100;
+		Texture credit;
+		Texture credit_press;
+		Texture play;
+		Texture play_press;
+		Texture sound_l;
+		Texture sound_l_press;
+		Texture sound_m;
+		Texture sound_m_press;
+		Texture text_area;
+		Texture txt_credit;
+		Texture txt_mute;
+		Texture txt_play_again;
+		Texture txt_unmute;
+		float x_button;
+		float y_button;
+		float y_buttonF;
+		float y_textArea;
+		int button_check;
+		boolean press;
+		boolean pressC;
+		ButtonMute buttonMute;
+		ButtonCredit buttonCredit;
 
 	public BarGame() {
 
@@ -311,6 +336,31 @@ public class BarGame extends ApplicationAdapter {
 		debugRenderer = new Box2DDebugRenderer();
 		worldcamera = new OrthographicCamera();//(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
 		worldcamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		
+		/// Button ///
+		credit = new Texture("button/Credit.png");
+		credit_press = new Texture("button/Credit_Press.png");
+		play = new Texture("button/Play.png");
+		play_press = new Texture("button/Play_Press.png");
+		sound_l = new Texture("button/Sound_L.png");
+		sound_l_press = new Texture("button/Sound_L_Press.png");
+		sound_m = new Texture("button/Sound_M.png");
+		sound_m_press = new Texture("button/Sound_M_Press.png");
+		text_area = new Texture("button/Text_area.png");
+		txt_credit = new Texture("button/Txt_Credit.png");
+		txt_mute = new Texture("button/Txt_Mute.png");
+		txt_play_again = new Texture("button/Txt_PlayAgain.png");
+		txt_unmute = new Texture("button/Txt_UnMute.png");
+		x_button = 640-(play.getWidth()/2);
+		y_textArea = (720/2-text_area.getWidth()/2);
+		y_button = -(text_area.getHeight());
+		y_buttonF = -(text_area.getHeight());
+		button_check = 0;
+		press = false;
+		pressC = false;
+		buttonMute = new ButtonMute(sound_l, x_button/0.80f, y_button+play.getHeight(), txt_mute);
+		buttonCredit = new ButtonCredit(credit, x_button*0.75f, y_button+play.getHeight());
+		
 		resetWorld();
 	}
 
@@ -324,6 +374,13 @@ public class BarGame extends ApplicationAdapter {
 		bars.clear();
 		building.clear();
 		trees.clear();
+		
+		/// reset animation button
+		y_button = -(text_area.getHeight());
+		y_buttonF = -(text_area.getHeight());
+		button_check = 0;
+		buttonMute.position.y = y_button;
+		buttonCredit.position.y = y_button;
 
 		int prev_temp = 0;
 		int home_old = 0;
@@ -390,8 +447,48 @@ public class BarGame extends ApplicationAdapter {
 				gameState = GameState.Running;
 			}
 			if (gameState == GameState.GameOver) {
-				gameState = GameState.Start;
-				resetWorld();
+				if(Gdx.input.getX() >= (x_button*0.75f) && Gdx.input.getX() <= ((x_button*0.75f)+play.getWidth())){
+					//to credit page and Animation
+					//determine parameter save state
+					gameState = GameState.GameOver;
+					if(pressC == true){
+						buttonCredit.position.x = x_button*0.75f;
+						buttonCredit.position.y = y_button;
+						buttonCredit.image = credit;
+						pressC = false;
+					}
+					else{
+						buttonCredit.position.x = x_button*0.75f;
+						buttonCredit.position.y = y_button;
+						buttonCredit.image = credit_press;
+						pressC = true;
+					}
+				}
+				if(Gdx.input.getX() >= (x_button) && Gdx.input.getX() <= ((x_button)+play.getWidth())){
+					//start
+					gameState = GameState.Start;
+					resetWorld();
+				}
+				if(Gdx.input.getX() >= (x_button/0.80f) && Gdx.input.getX() <= ((x_button/0.80f)+play.getWidth())){
+					//Mute or Unmute
+					//Change Animation
+					gameState = GameState.GameOver;
+					System.out.println("Main: "+press);
+					if(press == true){
+						buttonMute.position.x = x_button/0.80f;
+						buttonMute.position.y = y_button;
+						buttonMute.image = sound_l;
+						buttonMute.txt = txt_mute;
+						press = false;
+					}
+					else{
+						buttonMute.position.x = x_button/0.80f;
+						buttonMute.position.y = y_button;
+						buttonMute.image = sound_m_press;
+						buttonMute.txt = txt_unmute;
+						press = true;
+					}
+				}
 			}
 
 		}
@@ -541,8 +638,48 @@ public class BarGame extends ApplicationAdapter {
 					Gdx.graphics.getHeight() / 2 - ready.getRegionHeight() / 2);
 		}
 		if (gameState == GameState.GameOver) {
-			batch.draw(gameOver, Gdx.graphics.getWidth() / 2 - gameOver.getRegionWidth() / 2,
-					Gdx.graphics.getHeight() / 2 - gameOver.getRegionHeight() / 2);
+			/// Animation slide ///
+			if(y_buttonF < y_textArea){
+				y_buttonF += Gdx.graphics.getDeltaTime() * 2000;
+			}
+			if(y_button < y_textArea-30){
+				y_button += Gdx.graphics.getDeltaTime() * 2000;
+				buttonMute.position.y = y_button;
+				buttonCredit.position.y = y_button;
+			}
+			batch.draw(gameOver, Gdx.graphics.getWidth() / 2 - gameOver.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - gameOver.getRegionHeight() / 2);
+			batch.draw(text_area, 640-text_area.getWidth()/2, y_buttonF);
+
+			/// Animation button when mouse pass show message			
+			if(Gdx.input.getX() >= (x_button*0.75f) && Gdx.input.getX() <= ((x_button*0.75f)+play.getWidth())){
+				button_check = 1;
+			}
+			else if(Gdx.input.getX() >= (x_button) && Gdx.input.getX() <= ((x_button)+play.getWidth())){
+				button_check = 2;
+			}
+			else if(Gdx.input.getX() >= (x_button/0.80f) && Gdx.input.getX() <= ((x_button/0.80f)+play.getWidth())){
+				button_check = 3;
+			}
+			/// Button credit ///
+			if(Gdx.input.getX() >= (x_button*0.75f) && Gdx.input.getX() <= ((x_button*0.75f)+play.getWidth()) && Gdx.input.getY() >= 720-(play.getHeight()+y_button) && Gdx.input.getY() <= 720-y_button-50 && button_check == 1){
+				batch.draw(buttonCredit.image, buttonCredit.position.x, buttonCredit.position.y);
+				batch.draw(txt_credit, x_button*0.75f, y_button+play.getHeight());
+			}
+			batch.draw(buttonCredit.image, buttonCredit.position.x, buttonCredit.position.y);
+			/// Button play again ///
+			if(Gdx.input.getX() >= (x_button) && Gdx.input.getX() <= ((x_button)+play.getWidth()) && Gdx.input.getY() >= 720-(play.getHeight()+y_button) && Gdx.input.getY() <= 720-y_button-50 && button_check == 2){
+				batch.draw(play, x_button, y_button);
+				batch.draw(txt_play_again, x_button-25, y_button+play.getHeight());
+			}
+			else{
+				batch.draw(play, x_button, y_button);
+			}
+			/// Button mute and unmute ///
+			if(Gdx.input.getX() >= (x_button/0.80f) && Gdx.input.getX() <= ((x_button/0.80f)+play.getWidth()) && Gdx.input.getY() >= 720-(play.getHeight()+y_button) && Gdx.input.getY() <= 720-y_button-50 && button_check == 3){
+				batch.draw(buttonMute.image, buttonMute.position.x, buttonMute.position.y);
+				batch.draw(buttonMute.txt, x_button/0.80f, y_button+play.getHeight());
+			}
+			batch.draw(buttonMute.image, buttonMute.position.x, buttonMute.position.y);
 		}
 		// if(gameState == GameState.GameOver || gameState == GameState.Running)
 		// {
@@ -597,6 +734,30 @@ public class BarGame extends ApplicationAdapter {
 			this.position.x = x;
 			this.position.y = y;
 			this.image = image;
+		}
+	}
+	
+	static class ButtonMute{
+		Vector2 position = new Vector2();
+		Texture image;
+		Texture txt;
+		
+		public ButtonMute(Texture image, float x, float y, Texture txt){
+			this.image = image;
+			this.position.x = x;
+			this.position.y = y;
+			this.txt = txt;
+		}
+	}
+	
+	static class ButtonCredit{
+		Vector2 position = new Vector2();
+		Texture image;
+		
+		public ButtonCredit(Texture image, float x, float y){
+			this.image = image;
+			this.position.x = x;
+			this.position.y = y;
 		}
 	}
 
