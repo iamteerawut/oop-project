@@ -629,12 +629,8 @@ public class BarGame extends ApplicationAdapter {
 		}
 		if (Gdx.input.isTouched() && check == 1 && gameState == GameState.Running) {
 			x_right += deltaTime * speed_hand;
-			HR.setPosition( x_right , 470);
-	        R_hand = new BodyDef();
-	        R_hand.type = BodyDef.BodyType.DynamicBody;
-	        R_hand.position.set((HR.getX()+HR.getWidth()/2)/PPM, (HR.getY()+HR.getHeight()/2)/PPM);
-	        Rhand = world.createBody(R_hand);
-//			Rhand.setLinearVelocity( deltaTime * speed_hand , 0f);
+			
+			Rhand.setLinearVelocity( deltaTime * speed_hand , 0f);
 		}
 
 		else if (Gdx.input.isTouched() && check == 0 && gameState == GameState.Running) {
@@ -682,7 +678,7 @@ public class BarGame extends ApplicationAdapter {
 		batch.setProjectionMatrix(worldcamera.combined);		
 		
 		//		Rhand.setLinearVelocity(x_right, 0f);
-		HR.setPosition((Rarm.getPosition().x * PPM) - HR.getWidth()/2, (Rhand.getPosition().y * PPM) -HR.getHeight()/2 );
+		HR.setPosition((Rhand.getPosition().x * PPM) - HR.getWidth()/2, (Rhand.getPosition().y * PPM) -HR.getHeight()/2 );
 		HL.setPosition((Lhand.getPosition().x * PPM) - HL.getWidth()/2, (Lhand.getPosition().y * PPM) -HL.getHeight()/2 );
  
         AL.setPosition((Larm.getPosition().x * PPM) - AL.getWidth()/2, (Larm.getPosition().y * PPM) -AL.getHeight()/2 +20);
