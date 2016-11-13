@@ -5,6 +5,7 @@ import java.util.Random;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -23,9 +24,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.Joint;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
@@ -57,6 +56,8 @@ public class BarGame extends ApplicationAdapter {
 	FreeTypeFontGenerator generator;
 	FreeTypeFontParameter parameter;
 	Boolean count = true;
+	
+	Music bgmusic;
 
 	Vector2 hand_rPos = new Vector2();
 	Vector2 hand_lPos = new Vector2();
@@ -175,6 +176,10 @@ public class BarGame extends ApplicationAdapter {
 		gameOver = new TextureRegion(new Texture("gameover.png"));
 		font = new BitmapFont(Gdx.files.internal("font/howser-72.fnt"));
 		scoreFont = new BitmapFont(Gdx.files.internal("font/howser-36.fnt"));
+		
+		bgmusic = Gdx.audio.newMusic(Gdx.files.internal("sound/bg.wav"));
+		bgmusic.setLooping(true);
+	    bgmusic.play();
 
 		bar = new TextureRegion(new Texture("bar2.png"));
 		bar2 = new TextureRegion(new Texture("bar.png"));
