@@ -345,10 +345,10 @@ public class BarGame extends ApplicationAdapter {
 		credit_press = new Texture("button/Credit_Press.png");
 		play = new Texture("button/Play.png");
 		play_press = new Texture("button/Play_Press.png");
-		sound_l = new Texture("button/Sound_L.png");
+		sound_l = new Texture("button/New_Sound_L.png");
 		sound_l_press = new Texture("button/Sound_L_Press.png");
 		sound_m = new Texture("button/Sound_M.png");
-		sound_m_press = new Texture("button/Sound_M_Press.png");
+		sound_m_press = new Texture("button/New_Sound_M_Press.png");
 		text_area = new Texture("button/Text_area.png");
 		txt_credit = new Texture("button/Txt_Credit.png");
 		txt_mute = new Texture("button/Txt_Mute.png");
