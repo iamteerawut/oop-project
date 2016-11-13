@@ -22,13 +22,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
@@ -82,13 +77,12 @@ public class BarGame extends ApplicationAdapter {
 	int check;
 	int score = 0;
 	int highscore = 0;
-	int speed_hand = 350;
+	int speed_hand = 400;
 	int s;
 	int y;
 	float bar_x;
 	float x_right;
 	float x_left;
-	float torque = 0.0f;
 	
 	Random ran;
 	/// background ///
@@ -114,7 +108,6 @@ public class BarGame extends ApplicationAdapter {
 	Sprite RL;
 	Sprite LL;
 	Sprite XA;
-	World world = new World(new Vector2(0, -9.81f), true);
 	
 	/// Button ///
 	public static final int BUTTON_WIDTH = 100;
@@ -184,15 +177,13 @@ public class BarGame extends ApplicationAdapter {
 		scoreFont = new BitmapFont(Gdx.files.internal("font/howser-36.fnt"));		
 		bgmusic = Gdx.audio.newMusic(Gdx.files.internal("sound/bgmusic.wav"));
 		mute = false;
-		bar = new TextureRegion(new Texture("bar2.png"));
-		bar2 = new TextureRegion(new Texture("Bar/Bar_center2.png"));
-		bar_up = new Texture("Bar/Bar_up3.png");
-		hand_right = new TextureRegion(new Texture("boxB.png"));
-		hand_left = new TextureRegion(new Texture("boxR.png"));
-		ran = new Random();
-		
 		bar_break[0] = new TextureRegion(new Texture("bar2.png"));
 		bar_break[1] = new TextureRegion(new Texture("Bar/break_bar.png"));
+		bar2 = new TextureRegion(new Texture("Bar/Bar_center2.png"));
+		bar_up = new Texture("Bar/Bar_up3.png");
+		ran = new Random();
+		
+		
 
 		// scrolling Background //
 		x1 = 0;
@@ -522,10 +513,12 @@ public class BarGame extends ApplicationAdapter {
 			batch.draw(tre.image, tre.position.x, tre.position.y, tre.image.getWidth(), tre.image.getHeight());
 		}
 		//// Draw Body ////
+		float middle = Math.abs(x_right + x_left)/2 - 80;
 		batch.draw(AL, x_left - 15, y + 15 - AL.getHeight());
-		batch.draw(XA, Math.min(x_right,  x_left), y + 15 - AL.getHeight() , Math.max(x_right,  x_left) - Math.min( x_right,  x_left) + 10, 30);
-		batch.draw(LL, ((Math.max(x_right, x_left) - Math.min(x_right, x_left))/2 + Math.min(x_right, x_left)) , y - 300 - LL.getHeight());
-		batch.draw(bo, ((Math.max(x_right, x_left) - Math.min(x_right, x_left))/2 + Math.min(x_right, x_left)) - 50, y - 10 - bo.getHeight());
+		batch.draw(XA, Math.min(x_left, middle) + 10, y + 15 - AL.getHeight(), Math.abs(middle - x_left), 30);
+		batch.draw(LL, middle , y - 300 - LL.getHeight());
+		batch.draw(bo, middle - 50, y - 10 - bo.getHeight());
+		batch.draw(XA, Math.min(x_right-5, middle) + 10, y + 15 - AL.getHeight(), Math.abs(middle - x_right)+5  , 30);
 		batch.draw(RL, ((Math.max(x_right, x_left) - Math.min(x_right, x_left))/2 + Math.min(x_right, x_left))- 30 , y - 300 - RL.getHeight());
 		batch.draw(AR, x_right - 15, y + 15 - AR.getHeight());
 		
