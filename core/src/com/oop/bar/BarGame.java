@@ -177,9 +177,7 @@ public class BarGame extends ApplicationAdapter {
 		font = new BitmapFont(Gdx.files.internal("font/howser-72.fnt"));
 		scoreFont = new BitmapFont(Gdx.files.internal("font/howser-36.fnt"));
 		
-		bgmusic = Gdx.audio.newMusic(Gdx.files.internal("sound/bg.wav"));
-		bgmusic.setLooping(true);
-	    bgmusic.play();
+		bgmusic = Gdx.audio.newMusic(Gdx.files.internal("sound/bgmusic.wav"));
 
 		bar = new TextureRegion(new Texture("bar2.png"));
 		bar2 = new TextureRegion(new Texture("bar.png"));
