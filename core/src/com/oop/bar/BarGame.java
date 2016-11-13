@@ -97,6 +97,7 @@ public class BarGame extends ApplicationAdapter {
 	int goalSpeed;
 	float imageScale;
 	boolean speedPause;
+	boolean mute;
 
 	/// Player ///
 	static final float PPM = 100;
@@ -178,6 +179,7 @@ public class BarGame extends ApplicationAdapter {
 		scoreFont = new BitmapFont(Gdx.files.internal("font/howser-36.fnt"));
 		
 		bgmusic = Gdx.audio.newMusic(Gdx.files.internal("sound/bgmusic.wav"));
+		mute = false;
 
 		bar = new TextureRegion(new Texture("bar2.png"));
 		bar2 = new TextureRegion(new Texture("bar.png"));
@@ -438,8 +440,14 @@ public class BarGame extends ApplicationAdapter {
 		bars.clear();
 		building.clear();
 		trees.clear();
-		bgmusic.setLooping(true);
-	    bgmusic.play();
+		
+		if (mute == true) {
+			bgmusic.stop();
+		}
+		else {
+			bgmusic.setLooping(true);
+			bgmusic.play();
+		}
 	    
 	    HR.setPosition( x_right , 450);
 	    HL.setPosition( x_left , 450);
@@ -550,6 +558,7 @@ public class BarGame extends ApplicationAdapter {
 						buttonMute.txt = txt_mute;
 						press = false;
 						bgmusic.play();
+						mute = false;
 					}
 					else{
 						buttonMute.position.x = x_button/0.80f;
@@ -558,6 +567,7 @@ public class BarGame extends ApplicationAdapter {
 						buttonMute.txt = txt_unmute;
 						press = true;
 					    bgmusic.stop();
+					    mute = true;
 					}
 				}
 			}
@@ -723,7 +733,7 @@ public class BarGame extends ApplicationAdapter {
 				buttonMute.position.y = y_button;
 				buttonCredit.position.y = y_button;
 			}
-			batch.draw(gameOver, Gdx.graphics.getWidth() / 2 - gameOver.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - gameOver.getRegionHeight() / 2);
+			//batch.draw(gameOver, Gdx.graphics.getWidth() / 2 - gameOver.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - gameOver.getRegionHeight() / 2);
 			batch.draw(text_area, game.WIDTH/2-text_area.getWidth()/2, y_buttonF);
 
 			/// Animation button when mouse pass show message			
