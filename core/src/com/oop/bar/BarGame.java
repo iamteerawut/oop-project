@@ -557,8 +557,8 @@ public class BarGame extends ApplicationAdapter {
 						buttonMute.image = sound_l;
 						buttonMute.txt = txt_mute;
 						press = false;
-						bgmusic.play();
 						mute = false;
+						bgmusic.play();
 					}
 					else{
 						buttonMute.position.x = x_button/0.80f;
@@ -566,8 +566,8 @@ public class BarGame extends ApplicationAdapter {
 						buttonMute.image = sound_m_press;
 						buttonMute.txt = txt_unmute;
 						press = true;
-					    bgmusic.stop();
 					    mute = true;
+					    bgmusic.stop();
 					}
 				}
 			}
