@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -143,10 +144,12 @@ public class BarGame extends ApplicationAdapter {
 	Texture txt_mute;
 	Texture txt_play_again;
 	Texture txt_unmute;
+	Texture credit_ending;
 	float x_button;
 	float y_button;
 	float y_buttonF;
 	float y_textArea;
+	float y_credit;
 	int button_check;
 	boolean press;
 	boolean pressC;
@@ -160,6 +163,13 @@ public class BarGame extends ApplicationAdapter {
 	/// Font ///
 	BitmapFont scoreBoardFont;
 	BitmapFont fontBoard;
+	
+	/// LOGO ///
+	Texture grandLogo;
+	Animation grandPa;
+	TextureRegion[] grandLogo2;
+	TextureRegion currentFrame;
+	float stateTime;
 
 	public BarGame() {
 
@@ -424,9 +434,11 @@ public class BarGame extends ApplicationAdapter {
 		txt_mute = new Texture("button/Txt_Mute.png");
 		txt_play_again = new Texture("button/Txt_PlayAgain.png");
 		txt_unmute = new Texture("button/Txt_UnMute.png");
+		credit_ending = new Texture("button/Credit_Ending.png");
 		x_button = (game.WIDTH/2)-(play.getWidth()/2);
 		y_textArea = ((game.HEIGHT/2)-text_area.getWidth()/2);
 		y_button = -(text_area.getHeight());
+		y_credit = Gdx.graphics.getHeight()+credit_ending.getHeight();
 		y_buttonF = -(text_area.getHeight());
 		button_check = 0;
 		press = false;
@@ -442,6 +454,18 @@ public class BarGame extends ApplicationAdapter {
 		fontBoard = new BitmapFont(Gdx.files.internal("font/howser-72.fnt"));
 		scoreBoardFont= new BitmapFont(Gdx.files.internal("font/howser-48.fnt"));
 		
+		/// Logo ///
+		grandLogo = new Texture(Gdx.files.internal("LogoSheet.png"));
+		TextureRegion[][] tmp = TextureRegion.split(grandLogo, grandLogo.getWidth()/1, grandLogo.getHeight()/2);
+		grandLogo2 = new TextureRegion[1*2];
+		int index = 0;
+		for(int i = 0; i < 2; i++){
+			for(int j = 0; j < 1; j++){
+				grandLogo2[index++] = tmp[i][j];
+			}
+		}
+		grandPa = new Animation(0.5f, grandLogo2);
+		stateTime = 0f;
 		resetWorld();
 	}
 
@@ -474,6 +498,7 @@ public class BarGame extends ApplicationAdapter {
 		button_check = 0;
 		buttonMute.position.y = y_button;
 		buttonCredit.position.y = y_button;
+		y_credit = credit_ending.getHeight();
 		
 		/// Count Combo ///
 		countCom = 0;
@@ -570,7 +595,6 @@ public class BarGame extends ApplicationAdapter {
 					//Mute or Unmute
 					//Change Animation
 					gameState = GameState.GameOver;
-					System.out.println("Main: "+press);
 					if(press == true){
 						buttonMute.position.x = x_button/0.80f;
 						buttonMute.position.y = y_button;
@@ -751,10 +775,13 @@ public class BarGame extends ApplicationAdapter {
 		/// Game State ///
 		if (gameState == GameState.Start) {
 			batch.draw(ready, Gdx.graphics.getWidth() / 2 - ready.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - ready.getRegionHeight() / 2);
+			stateTime += Gdx.graphics.getDeltaTime();
+			currentFrame = grandPa.getKeyFrame(stateTime, true);
+			batch.draw(currentFrame, 400, 200, 1280/2, 720/2);
 		}
 		if (gameState == GameState.GameOver) {
 			/// Animation slide ///
-			if(y_buttonF < y_textArea){
+			if(y_buttonF < y_textArea && pressC != true){
 				y_buttonF += Gdx.graphics.getDeltaTime() * 2000;
 			}
 			if(y_button < y_textArea-30){
@@ -762,10 +789,11 @@ public class BarGame extends ApplicationAdapter {
 				buttonMute.position.y = y_button;
 				buttonCredit.position.y = y_button;
 			}
-			batch.draw(gameOver, Gdx.graphics.getWidth() / 2 - gameOver.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - gameOver.getRegionHeight() / 2);
 			batch.draw(text_area, Gdx.graphics.getWidth()/2-text_area.getWidth()/2, y_buttonF);
-			font.draw(batch, scoreBoardLayout, Gdx.graphics.getWidth()/2-5, y_button+400);
-			scoreFont.draw(batch, highscoreBoardLayout, Gdx.graphics.getWidth()/2-35, y_button+230);
+			batch.draw(credit_ending, Gdx.graphics.getWidth()/2-credit_ending.getWidth()/2, y_credit);
+			
+			font.draw(batch, scoreBoardLayout, Gdx.graphics.getWidth()/2-5, y_buttonF+370);
+			scoreFont.draw(batch, highscoreBoardLayout, Gdx.graphics.getWidth()/2-35, y_buttonF+190);
 			/// Animation button when mouse pass show message		
 			if(Gdx.input.getX() >= (x_button*0.75f) && Gdx.input.getX() <= ((x_button*0.75f)+play.getWidth())){
 				button_check = 1;
@@ -776,12 +804,27 @@ public class BarGame extends ApplicationAdapter {
 			else if(Gdx.input.getX() >= (x_button/0.80f) && Gdx.input.getX() <= ((x_button/0.80f)+play.getWidth())){
 				button_check = 3;
 			}
+			
+			
 			/// Button credit ///
 			if(Gdx.input.getX() >= (x_button*0.75f) && Gdx.input.getX() <= ((x_button*0.75f)+play.getWidth()) && Gdx.input.getY() >= Gdx.graphics.getHeight()-(play.getHeight()+y_button) && Gdx.input.getY() <= Gdx.graphics.getHeight()-y_button*0.99f && button_check == 1){
 				batch.draw(buttonCredit.image, buttonCredit.position.x, buttonCredit.position.y);
 				batch.draw(txt_credit, x_button*0.75f, y_button+play.getHeight());
 			}
 			batch.draw(buttonCredit.image, buttonCredit.position.x, buttonCredit.position.y);
+			if(pressC == true){
+				if(y_buttonF >= -(text_area.getHeight())){
+					y_buttonF -= Gdx.graphics.getDeltaTime() * 2000;
+				}
+				if(y_credit >= credit_ending.getHeight()/6){
+					y_credit -= Gdx.graphics.getDeltaTime() * 2000;
+				}
+			}
+			else{
+				if(y_credit < Gdx.graphics.getHeight()){
+					y_credit += Gdx.graphics.getDeltaTime() * 2000;
+				}
+			}
 			/// Button play again ///
 			if(Gdx.input.getX() >= (x_button) && Gdx.input.getX() <= ((x_button)+play.getWidth()) && Gdx.input.getY() >= Gdx.graphics.getHeight()-(play.getHeight()+y_button) && Gdx.input.getY() <= Gdx.graphics.getHeight()-y_button*0.99f && button_check == 2){
 				batch.draw(play, x_button, y_button);
