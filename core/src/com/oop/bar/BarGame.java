@@ -72,6 +72,9 @@ public class BarGame extends ApplicationAdapter {
 	Array<Tree> trees = new Array<Tree>();
 	Array<Texture> tree = new Array<Texture>();
 	
+	Array<ObjectDead> objectDeads = new Array<ObjectDead>();
+	Array<TextureRegion> objectDead = new Array<TextureRegion>();
+	
 
 	Rectangle hand_r = new Rectangle();
 	Rectangle hand_l = new Rectangle();
@@ -146,6 +149,9 @@ public class BarGame extends ApplicationAdapter {
 	/// Count Combo ///
 	int countCom;
 	int countComNew;
+	Texture combo;
+	int countComMul;
+	int countI;
 	
 	/// Font ///
 	BitmapFont scoreBoardFont;
@@ -157,6 +163,12 @@ public class BarGame extends ApplicationAdapter {
 	TextureRegion[] grandLogo2;
 	TextureRegion currentFrame;
 	float stateTime;
+	
+	Texture sheet_ready;
+	Animation animation_ready;
+	TextureRegion[] walk_ready;
+	TextureRegion currentFrame_ready;
+	float stateTime_ready;
 
 	public BarGame() {
 
@@ -178,8 +190,8 @@ public class BarGame extends ApplicationAdapter {
 		uiCamera.update();
 		background = new Texture("background.png");
 		background2 = new Texture("background.png");
-		ready = new TextureRegion(new Texture("get_ready1.4.png"));
-		gameOver = new TextureRegion(new Texture("gameover.png"));
+//		ready = new TextureRegion(new Texture("get_ready1.4.png"));
+//		gameOver = new TextureRegion(new Texture("gameover.png"));
 		font = new BitmapFont(Gdx.files.internal("font/howser-72.fnt"));
 		scoreFont = new BitmapFont(Gdx.files.internal("font/howser-36.fnt"));		
 		bgmusic = Gdx.audio.newMusic(Gdx.files.internal("sound/bgmusic.wav"));
@@ -222,6 +234,16 @@ public class BarGame extends ApplicationAdapter {
 		tree.add(new Texture("Tree/tree4.png"));
 		tree.add(new Texture("Tree/tree5.png"));
 		tree.add(new Texture("Tree/tree6.png"));
+		// ObjectDead //
+		objectDead.add(new TextureRegion(new Texture("Obj/break_pot1.png")));
+		objectDead.add(new TextureRegion(new Texture("Obj/break_pot2.png")));
+		objectDead.add(new TextureRegion(new Texture("Obj/flower1.png")));
+		objectDead.add(new TextureRegion(new Texture("Obj/flower2.png")));
+		objectDead.add(new TextureRegion(new Texture("Obj/flower3.png")));
+		objectDead.add(new TextureRegion(new Texture("Obj/flower4.png")));
+		objectDead.add(new TextureRegion(new Texture("Obj/rock1.png")));
+		objectDead.add(new TextureRegion(new Texture("Obj/rock2.png")));
+		objectDead.add(new TextureRegion(new Texture("Obj/rock3.png")));		
 		// Player //
 		HR = new Sprite(new Texture("ANATOMY/R-Hand.png"));
 		HL = new Sprite(new Texture("ANATOMY/L-Hand.png"));
@@ -261,6 +283,9 @@ public class BarGame extends ApplicationAdapter {
 		/// Count Combo ///
 		countCom = 0;
 		countComNew = 3;
+		combo = new Texture("Combo_Text.png");
+		countComMul = 3;
+		countI = 1;
 		
 		/// BoardFont ///
 		fontBoard = new BitmapFont(Gdx.files.internal("font/howser-72.fnt"));
@@ -278,6 +303,16 @@ public class BarGame extends ApplicationAdapter {
 		}
 		grandPa = new Animation(0.5f, grandLogo2);
 		stateTime = 0f;
+		
+		/// GetReaady ///
+		sheet_ready = new Texture(Gdx.files.internal("getReadSheet.png"));
+		TextureRegion[][] imp_r = TextureRegion.split(sheet_ready, sheet_ready.getWidth()/1, sheet_ready.getHeight()/2);
+		walk_ready = new TextureRegion[1*2];
+		walk_ready[0] = imp_r[0][0];
+		walk_ready[1] = imp_r[1][0];
+		animation_ready = new Animation(0.5f, walk_ready);
+		stateTime_ready = 0f;
+		
 		resetWorld();
 	}
 
@@ -315,9 +350,11 @@ public class BarGame extends ApplicationAdapter {
 		/// Count Combo ///
 		countCom = 0;
 		countComNew = 3;
+		countComMul = 3;
 
 		int prev_temp = 0;
 		int home_old = 0;
+		int ob_old = 0;
 		for (int i = 0; i < 100; i++) {
 			//// Random Bar ////
 			s = (ran.nextInt(4) + 1) * 50;			
@@ -343,6 +380,13 @@ public class BarGame extends ApplicationAdapter {
 			int t = ((ran.nextInt(8) + 1) * 100);
 			int a = ran.nextInt(6);
 			trees.add(new Tree(i * 10 * t, -100, tree.get(a)));
+			
+			//// Random Object ////
+			int o = ((ran.nextInt(9)+1) * 250);
+			int ob = ran.nextInt(9);
+			objectDeads.add(new ObjectDead(ob_old, 520, objectDead.get(ob)));
+			ob_old += objectDead.get(ob).getRegionWidth()+o;
+			System.out.println(o);
 		}
 
 	}
@@ -465,8 +509,10 @@ public class BarGame extends ApplicationAdapter {
 					countCom++;
 					if(countCom == countComNew){
 						countCom = 0;
+						countComMul *= countI;
 						score += countComNew;
-						countComNew += 2;
+						countComNew += 3;
+						countI++;
 					}
 					score++;
 					count = false;
@@ -493,12 +539,16 @@ public class BarGame extends ApplicationAdapter {
 			}
 		}
 		if (Gdx.input.isTouched() && check == 1 && gameState == GameState.Running) {
-			x_right += deltaTime * speed_hand;
+//			if(x_right - x_left < 300){
+				x_right += deltaTime * speed_hand;
+//			}
 			
 		}
 
 		else if (Gdx.input.isTouched() && check == 0 && gameState == GameState.Running) {
-			x_left += deltaTime * speed_hand;
+//			if((x_left - x_right) < 300){
+				x_left += deltaTime * speed_hand;
+//			}
 			
 		}
 		
@@ -517,10 +567,15 @@ public class BarGame extends ApplicationAdapter {
 		for (Building bud : building) {
 			batch.draw(bud.image, bud.position.x, bud.position.y, bud.image.getWidth(), bud.image.getHeight());
 		}
-		//// Draw Building ///
+		//// Draw trees ///
 		for (Tree tre : trees) {
 			batch.draw(tre.image, tre.position.x, tre.position.y, tre.image.getWidth(), tre.image.getHeight());
 		}
+		//// Draw Objects ////
+		for(ObjectDead obj : objectDeads){
+			batch.draw(obj.image, obj.position.x, obj.position.y, obj.image.getRegionWidth(), obj.image.getRegionHeight());
+		}
+		
 		//// Draw Body ////
 		batch.draw(AL, x_left - 15, y + 15 - AL.getHeight());
 		batch.draw(XA, Math.min(x_right,  x_left), y + 15 - AL.getHeight() , Math.max(x_right,  x_left) - Math.min( x_right,  x_left) + 10, 30);
@@ -568,14 +623,21 @@ public class BarGame extends ApplicationAdapter {
 		/// Game State ///
 		if (gameState == GameState.Start) {
 
-			batch.draw(ready, Gdx.graphics.getWidth() / 2 - ready.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - ready.getRegionHeight() / 2);
 			stateTime += Gdx.graphics.getDeltaTime();
 			currentFrame = grandPa.getKeyFrame(stateTime, true);
-			batch.draw(currentFrame, 400, 200, 1280/2, 720/2);
-
-			batch.draw(ready, Gdx.graphics.getWidth() / 2 - ready.getRegionWidth() / 2, Gdx.graphics.getHeight() / 2 - ready.getRegionHeight() / 2, ready.getRegionWidth(), ready.getRegionHeight());
-
+			batch.draw(currentFrame, 330, 350, 1280/2, 720/3);
+			
+			stateTime_ready += Gdx.graphics.getDeltaTime();
+			currentFrame_ready = animation_ready.getKeyFrame(stateTime_ready, true);
+			batch.draw(currentFrame_ready, 340, 100, 1280/2, 720/3);
 		}
+		
+//		if(gameState == GameState.Running){
+//			if(countCom == countComMul){
+//				batch.draw(combo, 500, 100, 1280/2, 720/3);
+//			}
+//		}
+		
 		if (gameState == GameState.GameOver) {
 			/// Animation slide ///
 			x_right = 160;
@@ -642,9 +704,6 @@ public class BarGame extends ApplicationAdapter {
 			}
 			batch.draw(buttonMute.image, buttonMute.position.x, buttonMute.position.y);
 		}
-		// if(gameState == GameState.GameOver || gameState == GameState.Running)
-		// {
-		// }
 
 		batch.end();
 	}
@@ -692,6 +751,17 @@ public class BarGame extends ApplicationAdapter {
 		Texture image;
 
 		public Tree(float x, float y, Texture image) {
+			this.position.x = x;
+			this.position.y = y;
+			this.image = image;
+		}
+	}
+	
+	static class ObjectDead {
+		Vector2 position = new Vector2();
+		TextureRegion image;
+
+		public ObjectDead(float x, float y, TextureRegion image) {
 			this.position.x = x;
 			this.position.y = y;
 			this.image = image;
