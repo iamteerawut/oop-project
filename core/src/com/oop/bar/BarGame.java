@@ -1,5 +1,6 @@
 package com.oop.bar;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -23,7 +24,6 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
@@ -66,11 +66,14 @@ public class BarGame extends ApplicationAdapter {
 	Array<Texture> build = new Array<Texture>();
 	Array<Tree> trees = new Array<Tree>();
 	Array<Texture> tree = new Array<Texture>();
-	
+	Array<Stone> stones = new Array<Stone>();
+	Array<Texture> stone = new Array<Texture>(); 
 
 	Rectangle hand_r = new Rectangle();
 	Rectangle hand_l = new Rectangle();
 	Rectangle mbar = new Rectangle();
+	Rectangle recStone = new Rectangle();
+	Rectangle recBody = new Rectangle();
 
 	GameState gameState = GameState.Start;
 
@@ -83,6 +86,7 @@ public class BarGame extends ApplicationAdapter {
 	float bar_x;
 	float x_right;
 	float x_left;
+	
 	
 	Random ran;
 	/// background ///
@@ -157,6 +161,7 @@ public class BarGame extends ApplicationAdapter {
 
 	public BarGame(BarProject game) {
 		this.game = game;
+		
 	}
 
 	@Override
@@ -213,6 +218,10 @@ public class BarGame extends ApplicationAdapter {
 		tree.add(new Texture("Tree/tree4.png"));
 		tree.add(new Texture("Tree/tree5.png"));
 		tree.add(new Texture("Tree/tree6.png"));
+		//Stone//
+		stone.add(new Texture("rock1.png"));
+		stone.add(new Texture("rock2.png"));
+		stone.add(new Texture("rock3.png"));
 		// Player //
 		HR = new Sprite(new Texture("ANATOMY/R-Hand.png"));
 		HL = new Sprite(new Texture("ANATOMY/L-Hand.png"));
@@ -283,7 +292,7 @@ public class BarGame extends ApplicationAdapter {
 		bars.clear();
 		building.clear();
 		trees.clear();
-		
+		stones.clear();
 		
 		
 		if (mute == true) {
@@ -334,6 +343,11 @@ public class BarGame extends ApplicationAdapter {
 			int t = ((ran.nextInt(8) + 1) * 100);
 			int a = ran.nextInt(6);
 			trees.add(new Tree(i * 10 * t, -100, tree.get(a)));
+			
+			//// Random Stone ////
+			int c = (ran.nextInt(5)+1)*10;
+			int d = ran.nextInt(3);
+			stones.add(new Stone(i * 10 * c , background.getHeight(), stone.get(d)));
 		}
 
 	}
@@ -430,13 +444,14 @@ public class BarGame extends ApplicationAdapter {
 		camera.position.x = ((x_right / 2) + (x_left / 2)) + 300;
 		hand_r.set(x_right, 450, 20, 20);
 		hand_l.set(x_left, 450, 20, 20);
+		recBody.set((x_right + x_left)/2, 450, bo.getWidth(), bo.getHeight());
 		
 
 		//// Check Touch Bar ////
 		for (Bar b : bars) {
 			if (camera.position.x - b.position.x > 1280 + b.image.getRegionWidth()) {
 				b.position.x += (s + 50);
-				b.position.y = 450;
+				b.position.y -= 2;
 				b.image = bar;
 			}
 
@@ -493,6 +508,19 @@ public class BarGame extends ApplicationAdapter {
 			
 		}
 		
+		/// Stone ///
+//		for (Stone s : stones){
+//			s.position.x += 100;
+//			s.position.y -= deltaTime;
+//			
+//			recStone.set(s.position.x, s.position.y, 100, 100);
+//			if(recBody.overlaps(recStone)){
+//				if (gameState != GameState.GameOver){
+//					gameState = GameState.GameOver;
+//				}
+//			}
+//		}
+		
 
 		
 		
@@ -518,7 +546,7 @@ public class BarGame extends ApplicationAdapter {
 		batch.draw(XA, Math.min(x_left, middle) + 10, y + 15 - AL.getHeight(), Math.abs(middle - x_left), 30);
 		batch.draw(LL, middle , y - 300 - LL.getHeight());
 		batch.draw(bo, middle - 50, y - 10 - bo.getHeight());
-		batch.draw(XA, Math.min(x_right-5, middle) + 10, y + 15 - AL.getHeight(), Math.abs(middle - x_right)+5  , 30);
+		batch.draw(XA, Math.min(x_right, middle) + 10, y + 15 - AL.getHeight(), Math.abs(middle - x_right)  , 30);
 		batch.draw(RL, ((Math.max(x_right, x_left) - Math.min(x_right, x_left))/2 + Math.min(x_right, x_left))- 30 , y - 300 - RL.getHeight());
 		batch.draw(AR, x_right - 15, y + 15 - AR.getHeight());
 		
@@ -537,12 +565,10 @@ public class BarGame extends ApplicationAdapter {
          //// Draw Hand ////
 		batch.draw(HR, x_right, y);
 		batch.draw(HL, x_left, y);	
-					
+				
 		
 		batch.end();
-		
-		//// Draw Hand ////
-		
+
 		
 		batch.setProjectionMatrix(uiCamera.combined);
 		batch.begin();
@@ -666,6 +692,16 @@ public class BarGame extends ApplicationAdapter {
 			this.image2 = image2;
 			this.size = size;
 			this.bar_x = bar_x;
+		}
+	}
+	static class Stone {
+		Vector2 position = new Vector2();
+		Texture image;
+
+		public Stone (float x, float y, Texture image) {
+			this.position.x = x;
+			this.position.y = y;
+			this.image = image;
 		}
 	}
 
