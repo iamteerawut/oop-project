@@ -57,6 +57,10 @@ public class BarGame extends ApplicationAdapter {
 	
 	Music bgmusic;
 	Music comboMusic;
+	Music tapSound;
+	Music buttonSound;
+	Music deadSound;
+	
 
 	Vector2 hand_rPos = new Vector2();
 	Vector2 hand_lPos = new Vector2();
@@ -194,8 +198,13 @@ public class BarGame extends ApplicationAdapter {
 //		gameOver = new TextureRegion(new Texture("gameover.png"));
 		font = new BitmapFont(Gdx.files.internal("font/howser-72.fnt"));
 		scoreFont = new BitmapFont(Gdx.files.internal("font/howser-36.fnt"));		
-		bgmusic = Gdx.audio.newMusic(Gdx.files.internal("sound/bgmusic.wav"));
+		bgmusic = Gdx.audio.newMusic(Gdx.files.internal("sound/bensound-retrosoul.mp3"));
+		tapSound = Gdx.audio.newMusic(Gdx.files.internal("sound/tap.mp3"));
+		buttonSound = Gdx.audio.newMusic(Gdx.files.internal("sound/pop.mp3"));
+		deadSound = Gdx.audio.newMusic(Gdx.files.internal("sound/grandpa falling down.mp3"));
 		comboMusic = Gdx.audio.newMusic(Gdx.files.internal("sound/combomusic.wav"));
+		
+
 		mute = false;
 		bar_break[0] = new TextureRegion(new Texture("bar2.png"));
 		bar_break[1] = new TextureRegion(new Texture("Bar/break_bar.png"));
@@ -384,15 +393,15 @@ public class BarGame extends ApplicationAdapter {
 			int a = ran.nextInt(6);
 			trees.add(new Tree(i * 10 * t, -100, tree.get(a)));
 			
-			//// Random Object ////
-			int o = ((ran.nextInt(9)+1) * 250);
-			int ob = ran.nextInt(9);
-			objectDeads.add(new ObjectDead(ob_old, 520, objectDead.get(ob)));
-			ob_old += objectDead.get(ob).getRegionWidth()+o;
-			//// Random Stone ////
-			int c = (ran.nextInt(5)+1)*10;
-			int d = ran.nextInt(3);
-//			stones.add(new Stone(i * 10 * c , background.getHeight(), stone.get(d)));
+//			//// Random Object ////
+//			int o = ((ran.nextInt(9)+1) * 250);
+//			int ob = ran.nextInt(9);
+//			objectDeads.add(new ObjectDead(ob_old, 520, objectDead.get(ob)));
+//			ob_old += objectDead.get(ob).getRegionWidth()+o;
+//			//// Random Stone ////
+//			int c = (ran.nextInt(5)+1)*10;
+//			int d = ran.nextInt(3);
+////			stones.add(new Stone(i * 10 * c , background.getHeight(), stone.get(d)));
 		}
 
 	}
@@ -445,16 +454,19 @@ public class BarGame extends ApplicationAdapter {
 						buttonCredit.position.y = y_button;
 						buttonCredit.image = credit;
 						pressC = false;
+						buttonSound.play();
 					}
 					else{
 						buttonCredit.position.x = x_button*0.75f;
 						buttonCredit.position.y = y_button;
 						buttonCredit.image = credit_press;
 						pressC = true;
+						buttonSound.play();
 					}
 				}
 				if(Gdx.input.getX() >= (x_button) && Gdx.input.getX() <= ((x_button)+play.getWidth()) && Gdx.input.getY() >= Gdx.graphics.getHeight()-(play.getHeight()+y_button) && Gdx.input.getY() <= Gdx.graphics.getHeight()-y_button*0.99f){
 					//start
+					buttonSound.play();
 					gameState = GameState.Start;
 					resetWorld();
 				}
@@ -469,6 +481,7 @@ public class BarGame extends ApplicationAdapter {
 						buttonMute.txt = txt_mute;
 						press = false;
 						mute = false;
+						buttonSound.play();
 						bgmusic.play();
 					}
 					else{
@@ -478,6 +491,7 @@ public class BarGame extends ApplicationAdapter {
 						buttonMute.txt = txt_unmute;
 						press = true;
 					    mute = true;
+					    buttonSound.play();
 					    bgmusic.stop();
 					}
 				}
@@ -504,11 +518,13 @@ public class BarGame extends ApplicationAdapter {
 			if (!Gdx.input.isTouched()) {
 				if (hand_r.overlaps(mbar)) {
 					if (gameState != GameState.GameOver){
+						deadSound.play();
 						gameState = GameState.GameOver;
 					}
 				}
 				if (hand_l.overlaps(mbar)) {
 					if (gameState != GameState.GameOver){
+						deadSound.play();
 						gameState = GameState.GameOver;
 					}
 				}
@@ -519,6 +535,7 @@ public class BarGame extends ApplicationAdapter {
 						score += 3;
 						comboMusic.play();
 					}
+					tapSound.play();
 					score++;
 					count = false;
 				}
@@ -544,16 +561,16 @@ public class BarGame extends ApplicationAdapter {
 			}
 		}
 		if (Gdx.input.isTouched() && check == 1 && gameState == GameState.Running) {
-//			if(x_right - x_left < 300){
+			if(x_right - x_left < 300){
 				x_right += deltaTime * speed_hand;
-//			}
+			}
 			
 		}
 
 		else if (Gdx.input.isTouched() && check == 0 && gameState == GameState.Running) {
-//			if((x_left - x_right) < 300){
+		if((x_left - x_right) < 300){
 				x_left += deltaTime * speed_hand;
-//			}
+			}
 			
 		}
 		
@@ -590,18 +607,18 @@ public class BarGame extends ApplicationAdapter {
 			batch.draw(tre.image, tre.position.x, tre.position.y, tre.image.getWidth(), tre.image.getHeight());
 		}
 		//// Draw Objects ////
-		for(ObjectDead obj : objectDeads){
-			batch.draw(obj.image, obj.position.x, obj.position.y, obj.image.getRegionWidth(), obj.image.getRegionHeight());
-		}
+//		for(ObjectDead obj : objectDeads){
+//			batch.draw(obj.image, obj.position.x, obj.position.y, obj.image.getRegionWidth(), obj.image.getRegionHeight());
+//		}
 		
 		//// Draw Body ////
 		float middle = Math.abs(x_right + x_left)/2 - 80;
 		batch.draw(AL, x_left - 15, y + 15 - AL.getHeight());
 		batch.draw(XA, Math.min(x_left, middle) + 10, y + 15 - AL.getHeight(), Math.abs(middle - x_left), 30);
-		batch.draw(LL, middle , y - 300 - LL.getHeight());
+		batch.draw(LL, middle -10 , y - 300 - LL.getHeight());
 		batch.draw(bo, middle - 50, y - 10 - bo.getHeight());
 		batch.draw(XA, Math.min(x_right, middle) + 10, y + 15 - AL.getHeight(), Math.abs(middle - x_right)  , 30);
-		batch.draw(RL, ((Math.max(x_right, x_left) - Math.min(x_right, x_left))/2 + Math.min(x_right, x_left))- 30 , y - 300 - RL.getHeight());
+		batch.draw(RL, middle - 30, y - 300 - RL.getHeight());
 		batch.draw(AR, x_right - 15, y + 15 - AR.getHeight());
 		
 		
@@ -630,7 +647,7 @@ public class BarGame extends ApplicationAdapter {
 
 		// Font ///
 		GlyphLayout scoreLayout = new GlyphLayout(font, "" + score, Color.WHITE, 0, Align.center, false);
-		GlyphLayout highscoreLayout = new GlyphLayout(scoreFont, "Best\n" + highscore, Color.GOLD, 0, Align.left, false);
+		GlyphLayout highscoreLayout = new GlyphLayout(scoreFont, "Best\n" + highscore, Color.WHITE, 0, Align.left, false);
 
 		scoreFont.draw(batch, highscoreLayout, Gdx.graphics.getWidth() - 210, Gdx.graphics.getHeight() - 10);
 		font.draw(batch, scoreLayout, Gdx.graphics.getWidth() - 50, Gdx.graphics.getHeight() - 15);
