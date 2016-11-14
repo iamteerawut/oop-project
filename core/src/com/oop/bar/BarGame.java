@@ -56,6 +56,7 @@ public class BarGame extends ApplicationAdapter {
 	Boolean count = true;
 	
 	Music bgmusic;
+	Music comboMusic;
 
 	Vector2 hand_rPos = new Vector2();
 	Vector2 hand_lPos = new Vector2();
@@ -66,15 +67,12 @@ public class BarGame extends ApplicationAdapter {
 	Array<Texture> build = new Array<Texture>();
 	Array<Tree> trees = new Array<Tree>();
 	Array<Texture> tree = new Array<Texture>();
-<<<<<<< HEAD
 	
 	Array<ObjectDead> objectDeads = new Array<ObjectDead>();
 	Array<TextureRegion> objectDead = new Array<TextureRegion>();
 	
-=======
 	Array<Stone> stones = new Array<Stone>();
 	Array<Texture> stone = new Array<Texture>(); 
->>>>>>> origin/master
 
 	Rectangle hand_r = new Rectangle();
 	Rectangle hand_l = new Rectangle();
@@ -87,7 +85,7 @@ public class BarGame extends ApplicationAdapter {
 	int check;
 	int score = 0;
 	int highscore = 0;
-	int speed_hand = 400;
+	int speed_hand = 500;
 	int s;
 	int y;
 	float bar_x;
@@ -197,6 +195,7 @@ public class BarGame extends ApplicationAdapter {
 		font = new BitmapFont(Gdx.files.internal("font/howser-72.fnt"));
 		scoreFont = new BitmapFont(Gdx.files.internal("font/howser-36.fnt"));		
 		bgmusic = Gdx.audio.newMusic(Gdx.files.internal("sound/bgmusic.wav"));
+		comboMusic = Gdx.audio.newMusic(Gdx.files.internal("sound/combomusic.wav"));
 		mute = false;
 		bar_break[0] = new TextureRegion(new Texture("bar2.png"));
 		bar_break[1] = new TextureRegion(new Texture("Bar/break_bar.png"));
@@ -234,7 +233,6 @@ public class BarGame extends ApplicationAdapter {
 		tree.add(new Texture("Tree/tree4.png"));
 		tree.add(new Texture("Tree/tree5.png"));
 		tree.add(new Texture("Tree/tree6.png"));
-<<<<<<< HEAD
 		// ObjectDead //
 		objectDead.add(new TextureRegion(new Texture("Obj/break_pot1.png")));
 		objectDead.add(new TextureRegion(new Texture("Obj/break_pot2.png")));
@@ -245,12 +243,10 @@ public class BarGame extends ApplicationAdapter {
 		objectDead.add(new TextureRegion(new Texture("Obj/rock1.png")));
 		objectDead.add(new TextureRegion(new Texture("Obj/rock2.png")));
 		objectDead.add(new TextureRegion(new Texture("Obj/rock3.png")));		
-=======
 		//Stone//
-		stone.add(new Texture("rock1.png"));
-		stone.add(new Texture("rock2.png"));
-		stone.add(new Texture("rock3.png"));
->>>>>>> origin/master
+//		stone.add(new Texture("rock1.png"));
+//		stone.add(new Texture("rock2.png"));
+//		stone.add(new Texture("rock3.png"));
 		// Player //
 		HR = new Sprite(new Texture("ANATOMY/R-Hand.png"));
 		HL = new Sprite(new Texture("ANATOMY/L-Hand.png"));
@@ -388,19 +384,15 @@ public class BarGame extends ApplicationAdapter {
 			int a = ran.nextInt(6);
 			trees.add(new Tree(i * 10 * t, -100, tree.get(a)));
 			
-<<<<<<< HEAD
 			//// Random Object ////
 			int o = ((ran.nextInt(9)+1) * 250);
 			int ob = ran.nextInt(9);
 			objectDeads.add(new ObjectDead(ob_old, 520, objectDead.get(ob)));
 			ob_old += objectDead.get(ob).getRegionWidth()+o;
-			System.out.println(o);
-=======
 			//// Random Stone ////
 			int c = (ran.nextInt(5)+1)*10;
 			int d = ran.nextInt(3);
-			stones.add(new Stone(i * 10 * c , background.getHeight(), stone.get(d)));
->>>>>>> origin/master
+//			stones.add(new Stone(i * 10 * c , background.getHeight(), stone.get(d)));
 		}
 
 	}
@@ -522,12 +514,10 @@ public class BarGame extends ApplicationAdapter {
 				}
 				if (b.position.x > hand_r.x && count && gameState == GameState.Running) {
 					countCom++;
-					if(countCom == countComNew){
+					if(countCom == 3){
 						countCom = 0;
-						countComMul *= countI;
-						score += countComNew;
-						countComNew += 3;
-						countI++;
+						score += 3;
+						comboMusic.play();
 					}
 					score++;
 					count = false;
@@ -653,18 +643,18 @@ public class BarGame extends ApplicationAdapter {
 
 			stateTime += Gdx.graphics.getDeltaTime();
 			currentFrame = grandPa.getKeyFrame(stateTime, true);
-			batch.draw(currentFrame, 330, 350, 1280/2, 720/3);
+			batch.draw(currentFrame, 400, 475, 1280/2.5f, 720/3.5f);
 			
 			stateTime_ready += Gdx.graphics.getDeltaTime();
 			currentFrame_ready = animation_ready.getKeyFrame(stateTime_ready, true);
-			batch.draw(currentFrame_ready, 340, 100, 1280/2, 720/3);
+			batch.draw(currentFrame_ready, 360, 100, 1280/2, 720/3);
 		}
 		
-//		if(gameState == GameState.Running){
-//			if(countCom == countComMul){
-//				batch.draw(combo, 500, 100, 1280/2, 720/3);
-//			}
-//		}
+		if(gameState == GameState.Running){
+			if(score % 3 == 0 && score != 1 && score != 0){
+				batch.draw(combo, 500, 100, 1280/2, 720/3);
+			}
+		}
 		
 		if (gameState == GameState.GameOver) {
 			/// Animation slide ///
